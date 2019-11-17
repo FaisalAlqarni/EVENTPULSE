@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:senior_project/Pages/organizer_signup.dart';
 import 'user_signup.dart';
 
 class ChooseType extends StatelessWidget {
@@ -42,7 +43,10 @@ class ChooseType extends StatelessWidget {
                 textColor: Colors.white,
                 child: new Text('Orgnaizer', style: TextStyle(fontSize: 50),),
                 onPressed: () {
-
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => OrganizerSignUp()),
+                  );
                 },
               ),
           ],

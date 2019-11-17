@@ -5,8 +5,8 @@ import 'login.dart';
 import 'user_signup.dart';
 
 class AppDrawer extends StatelessWidget{
-  String username = UserSignUp.usernameController;
-  String email = UserSignUp.emailController;
+  String username = 'guest';
+  String email = 'email';
   @override
   Widget build(BuildContext context) {
     return Drawer(
