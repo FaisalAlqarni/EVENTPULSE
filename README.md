@@ -1,6 +1,8 @@
 # senior_project
 
-A new Flutter application.
+Graduation project
+
+an application to dosplay event to user and enable them to socialize with each other.
 
 ## Getting Started
 
