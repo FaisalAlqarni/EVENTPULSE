@@ -4,15 +4,24 @@ Graduation project
 
 an application to dosplay event to user and enable them to socialize with each other.
 
-## Getting Started
+## what is the changes in this branch?
+his is a redone for login and signup screens.
+the branch is from the 'master' branch.
 
-This project is a starting point for a Flutter application.
+modified screens:
+- login screen.
+- choose account type screen.
+- user sign-up screen.
+- organizer sign-up screen.
 
-A few resources to get you started if this is your first Flutter project:
+modified classes:
+- main.dart (added theme class).
+- Side_Bar.dart (add route to main login screen class 'MainLogin.dart', and changed the background color).
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+new classes:
+- clipper.dart
+- MainLogin.dart (contain all of the screens).
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+new assets:
+- fonts folder (contain the used fonts).
+- added new user pic in images folder.
