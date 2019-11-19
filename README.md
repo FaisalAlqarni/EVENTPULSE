@@ -5,28 +5,30 @@ Graduation project
 an application to dosplay event to user and enable them to socialize with each other.
 
 ## what is the changes in this branch?
-his is a redone for login and signup screens.
-the branch is from the 'master' branch.
+added the APIS
+added the Create event screen
+added event manager screen
 
 modified screens:
-- login screen.
-- choose account type screen.
-- user sign-up screen.
-- organizer sign-up screen.
+- side-bar screen
 
 new screens:
 - Event Mangement screen
 - Create event form screen
 
 modified classes:
-- main.dart (added theme class).
 - Side_Bar.dart (add route to main login screen class 'MainLogin.dart', and added route ro event manger screen 'event_manager.dart).
-
-new classes:
-- clipper.dart
-- MainLogin.dart (contain all of the login and regestration screens).
-- event_manager.dart (contein all of the events screen
 
 new assets:
 - fonts folder (contain the used fonts).
 - added new user pic in images folder.
+
+##what is insede classes:
+- Pages/Side_Bar.dart: contain the the whole side bar menu functionality and screens
+- Pages/event_manager.dart: contain the Welcoming Screen, Create Event Screen, Edit Event Screen and all of thier functionality
+- Pages/event_manager.dart: contain the Welcoming Screen, Create Event Screen, Edit Event Screen and all of thier functionality
+- Pages/MainLogin.dart: contain the Welcoming Screen, login Screen, registerarion type Screen, user form Screen, orgnaizer form Screen and all of thier functionality
+- Pages/home_page.dart: the home page that contain the discover view, map view, and timeline
+- Pages/clipper.dart: for the themeing (ignore it)
+- main.dart: used for flutter, it will redirect to home_page.dart (ignore it)
+ 
