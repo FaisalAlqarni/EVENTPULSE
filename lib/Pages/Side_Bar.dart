@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'MainLogin.dart';
-import 'create_event.dart';
+//import 'create_event.dart';
+import 'event_manager.dart';
 
 class AppDrawer extends StatelessWidget{
   String username = 'guest';
@@ -41,7 +42,7 @@ class AppDrawer extends StatelessWidget{
             child:  Column(
               children: <Widget>[
                 ListTile(
-                title: Text('Login Page'),
+                title: Text('LOGIN % REGISTRATION'),
                 trailing: new Icon(Icons.person),
                 onTap: (){
                     Navigator.of(context).pop();
@@ -49,18 +50,16 @@ class AppDrawer extends StatelessWidget{
                 }
               ),
               ListTile(
-                  title: new Text("Create Event"),
+                  title: new Text("EVENT MANAGER"),
                   trailing: new Icon(Icons.arrow_right),
                   onTap: () {
                     Navigator.of(context).pop();
-                    Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => CreateEvent()));
+                    Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => EventManager()));
                   }
                 ),
               ] 
             ),
-
            ),
-            
          ],
         ),
       );
