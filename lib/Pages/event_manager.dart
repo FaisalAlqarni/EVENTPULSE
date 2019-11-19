@@ -1,9 +1,26 @@
 import 'package:flutter/material.dart';
+//import 'Categories.dart';
 import 'clipper.dart';
 
 class EventManager extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
+}
+class Categories {
+  int id;
+  String name;
+ 
+  Categories(this.id, this.name);
+ 
+  static List<Categories> getCategories() {
+    return <Categories>[
+      Categories(1, 'Education'),
+      Categories(2, 'Games'),
+      Categories(3, 'Food'),
+      Categories(4, 'Festival'),
+      Categories(5, 'Family'),
+    ];
+  }
 }
 
 class _HomeState extends State<EventManager> {
@@ -22,13 +39,43 @@ class _HomeState extends State<EventManager> {
   String _loacationLongitude;
   bool _obsecure = false;
 
+  List<Categories> _categories = Categories.getCategories();
+  List<DropdownMenuItem<Categories>> _dropdownMenuItems;
+  Categories _selectedCategory;
+
+
+  @override
+    void initState() {
+      _dropdownMenuItems = buildDropdownMenuItems(_categories);
+      _selectedCategory = _dropdownMenuItems[0].value;
+      super.initState();
+    }
+    
+  List<DropdownMenuItem<Categories>> buildDropdownMenuItems(List categories) {
+  List<DropdownMenuItem<Categories>> items = List();
+  for (Categories category in categories) {
+    items.add(
+      DropdownMenuItem(
+        value: category,
+        child: Text(category.name),
+      ),
+    );
+  }
+  return items;
+}
   @override
   Widget build(BuildContext context) {
     Color primary = Theme.of(context).primaryColor;
+    @override
     void initState() {
+     
       super.initState();
     }
-
+    onChangeDropdownItem(Categories selectedCategory) {
+    setState(() {
+      _selectedCategory = selectedCategory;
+    });
+  }
     //HI logo widget
     Widget logo() {
       return Padding(
@@ -318,6 +365,30 @@ class _HomeState extends State<EventManager> {
                         SizedBox(
                           height: 20,
                         ),
+                        //for the drop down list
+                        Text("Select a categorty", style: TextStyle(
+                          height: 1, 
+                          fontWeight: FontWeight.bold, 
+                          fontSize: 20, 
+                          color: Theme.of(context).primaryColor,),),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        Container(
+                          child: Column(children: <Widget>[
+                          new DropdownButton(  
+                          style: new TextStyle( height: 0, fontWeight: FontWeight.bold,fontSize: 20,color: Theme.of(context).primaryColor,),
+                          value: _selectedCategory,
+                          items: _dropdownMenuItems,
+                          onChanged: onChangeDropdownItem,
+                          ),
+                        new SizedBox(
+                                height: 20.0,
+                              ), 
+                          ],)
+                         
+                        ),
+                        
                         Padding(
                           padding: EdgeInsets.only(
                               left: 20,
