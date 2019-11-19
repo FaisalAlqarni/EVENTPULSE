@@ -7,9 +7,14 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return MaterialApp(
       title: 'Social Event Discoverer',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+          hintColor: Colors.deepPurple,
+          primaryColor: Colors.deepPurple,
+          fontFamily: "Montserrat",
+          canvasColor: Colors.transparent),
       initialRoute: '/',
       routes: {
         '/': (context) => MyHomePage()
