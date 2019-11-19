@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget{
           hintColor: Colors.deepPurple,
           primaryColor: Colors.deepPurple,
           fontFamily: "Montserrat",
-          canvasColor: Colors.transparent),
+          canvasColor: Colors.white),
       initialRoute: '/',
       routes: {
         '/': (context) => MyHomePage()
