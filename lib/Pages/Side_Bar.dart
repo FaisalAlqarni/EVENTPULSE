@@ -1,8 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'MainLogin.dart';
 import 'create_event.dart';
-import 'login.dart';
-import 'user_signup.dart';
 
 class AppDrawer extends StatelessWidget{
   String username = 'guest';
@@ -10,6 +9,7 @@ class AppDrawer extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      
         child: ListView(
          children: <Widget>[
            Container(
@@ -26,7 +26,7 @@ class AppDrawer extends StatelessWidget{
                      decoration: BoxDecoration(
                        shape: BoxShape.circle,
                        image: DecorationImage(
-                         image: NetworkImage('https://png.pngtree.com/png-clipart/20190520/original/pngtree-business-male-icon-vector-png-image_4187852.jpg'),
+                         image: AssetImage('assets/images/user.png'),
                          fit: BoxFit.fill
                          ),
                      ),
@@ -36,22 +36,31 @@ class AppDrawer extends StatelessWidget{
                  ],
                ),)
            ),
-            ListTile(
-             title: Text('Login'),
-             trailing: new Icon(Icons.person),
-             onTap: (){
-                Navigator.of(context).pop();
-                Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => Login()));
-             }
-           ),
-           ListTile(
-              title: new Text("Create Event"),
-              trailing: new Icon(Icons.arrow_right),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => CreateEvent()));
-              }
+           new Container(
+            color: Colors.white,
+            child:  Column(
+              children: <Widget>[
+                ListTile(
+                title: Text('Login Page'),
+                trailing: new Icon(Icons.person),
+                onTap: (){
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => MainLogin()));
+                }
+              ),
+              ListTile(
+                  title: new Text("Create Event"),
+                  trailing: new Icon(Icons.arrow_right),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => CreateEvent()));
+                  }
+                ),
+              ] 
             ),
+
+           ),
+            
          ],
         ),
       );
