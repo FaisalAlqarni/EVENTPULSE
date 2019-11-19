@@ -42,7 +42,7 @@ class AppDrawer extends StatelessWidget{
             child:  Column(
               children: <Widget>[
                 ListTile(
-                title: Text('LOGIN % REGISTRATION'),
+                title: Text('LOGIN & REGISTRATION'),
                 trailing: new Icon(Icons.person),
                 onTap: (){
                     Navigator.of(context).pop();

@@ -1,6 +1,9 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-//import 'Categories.dart';
 import 'clipper.dart';
+import 'home_page.dart';
+
 
 class EventManager extends StatefulWidget {
   @override
@@ -24,6 +27,7 @@ class Categories {
 }
 
 class _HomeState extends State<EventManager> {
+  static final CREATE_EVENT_POST_URL = 'http://event-discoverer-backend.herokuapp.com/api/events';
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController _eventNameController = new TextEditingController();
   TextEditingController _timeFromController = new TextEditingController();
@@ -236,13 +240,32 @@ class _HomeState extends State<EventManager> {
     }
 
     //create functions: TO SEND IT TO BACKEND
-    void _createEvent() {
+    Future _createEvent() async {
       _eventName = _eventNameController.text;
       _timeFrom = _timeFromController.text;
       _timeTo = _timeToController.text;
       _description = _descriptionController.text;
       _loacationLatitude = _loacationLatitudeController.text;
       _loacationLongitude = _loacationLongitudeController.text;
+
+      CreateEventAPI newPost = new CreateEventAPI(name: _eventName, description: _description, latitude: _loacationLatitude,
+                                                  longitude: _loacationLongitude, startDate: _timeFrom, endDate: _timeTo);
+      CreateEventAPI p = await createEventPost(CREATE_EVENT_POST_URL,body: newPost.toMap());
+      print(p.name);
+
+      AlertDialog(
+        title: new Text("Thank you"),
+        content: new Text("event created successfully"),
+        actions: <Widget>[
+          // usually buttons at the bottom of the dialog
+          new FlatButton(
+            child: new Text("GO TO HOME PAGE"),
+            onPressed: () {
+              Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
+            },
+          ),
+        ],
+      );
 
       _eventNameController.clear();
       _timeFromController.clear();
@@ -568,4 +591,49 @@ class _HomeState extends State<EventManager> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
         ));
   }
+}
+
+
+// SECTION BELOW IS FOR THE API calsses and methods
+class CreateEventAPI{
+  final String name;
+  final String description;
+  final String latitude;
+  final String longitude;
+  final String startDate;
+  final String endDate;
+
+  CreateEventAPI({this.name, this.description, this.latitude,this.longitude, this.startDate, this.endDate,});
+
+  factory CreateEventAPI.fromJson(Map<String, dynamic> json) {
+    return CreateEventAPI(
+      name: json['name'],
+      description: json['description'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+      startDate: json['startDate'],
+      endDate: json['endDate'],
+    );
+  }
+
+  Map toMap() {
+    var map = new Map<String, dynamic>();
+    map["name"] = name;
+    map["description"] = description;
+    map["latitude"] = latitude;
+    map["longitude"] = longitude;
+    map["startDate"] = startDate;
+    map["endDate"] = endDate;
+    return map;
+  }
+}
+Future<CreateEventAPI> createEventPost(String url, {Map body}) async {
+  return http.post(url, body: body).then((http.Response response) {
+    final int statusCode = response.statusCode;
+
+    if (statusCode < 200 || statusCode > 400 || json == null) {
+      throw new Exception("Error while fetching data");
+    }
+    return CreateEventAPI.fromJson(json.decode(response.body));
+  });
 }

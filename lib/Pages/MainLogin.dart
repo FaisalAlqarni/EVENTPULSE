@@ -1,12 +1,19 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'clipper.dart';
+import 'home_page.dart';
 
 class MainLogin extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
+  
 }
 
 class _HomeState extends State<MainLogin> {
+  static final USER_RIGESTER_POST_URL = 'http://event-discoverer-backend.herokuapp.com/api/register';
+  static final ORGNAIZER_RIGESTER_POST_URL = 'http://event-discoverer-backend.herokuapp.com/api/register';
+  static final USER_LOGIN_POST_URL = 'http://event-discoverer-backend.herokuapp.com/api/login';
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController _firstNameController = new TextEditingController();
   TextEditingController _lastNameController = new TextEditingController();
@@ -151,30 +158,73 @@ class _HomeState extends State<MainLogin> {
     }
 
     //login and register fuctions
-    void _loginUser() {
+    Future _loginUser() async {
       _email = _emailController.text;
       _password = _passwordController.text;
+
+      LoginUserAPI newPost = new LoginUserAPI(username: _username, email: _email, password: _password);
+      LoginUserAPI p = await createLoginUserPost(USER_LOGIN_POST_URL,body: newPost.toMap());
+      print(p.email);
+
+      AlertDialog(
+      title: new Text("Thank you"),
+      content: new Text("loged-in successfully"),
+      actions: <Widget>[
+        // usually buttons at the bottom of the dialog
+        new FlatButton(
+          child: new Text("GO TO HOME PAGE"),
+          onPressed: () {
+            Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
+          },
+        ),
+      ],
+    );
+
       _emailController.clear();
       _passwordController.clear();
     }
 
-    void _registerUser() {
+    Future _registerUser() async {
       _firstName = _firstNameController.text;
       _lastName = _lastNameController.text;
       _username = _usernameController.text;
       _email = _emailController.text;
       _password = _passwordController.text;
       
+      PostUserRegisterAPI newPost = new PostUserRegisterAPI(username: _username, email: _email, password: _password);
+      PostUserRegisterAPI p = await createUserRegisterPost(USER_RIGESTER_POST_URL,body: newPost.toMap());
+      print(p.email);
+
       _firstNameController.clear();
       _lastNameController.clear();
       _usernameController.clear();
       _emailController.clear();
       _passwordController.clear();
+
+      AlertDialog(
+          title: new Text("Thank you"),
+          content: new Text("signed up successfully"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("GO TO HOME PAGE"),
+              onPressed: () {
+                Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
+              },
+            ),
+          ],
+        );
+
     }
-    void _registerOrgnaizer() {
+
+    Future _registerOrgnaizer() async {
       _orgnaizerName = _firstNameController.text;
       _email = _emailController.text;
       _password = _passwordController.text;
+
+      PostUserRegisterAPI newPost = new PostUserRegisterAPI(username: _username, email: _email, password: _password);
+      PostUserRegisterAPI p = await createUserRegisterPost(USER_RIGESTER_POST_URL,body: newPost.toMap());
+      print(p.email);
       
       _firstNameController.clear();
       _emailController.clear();
@@ -681,3 +731,105 @@ class _HomeState extends State<MainLogin> {
         ));
   }
 }
+
+// SECTION BELOW IS FOR THE API calsses and methods
+////////////////////////////// 
+
+// class for RegisterUser API
+class PostUserRegisterAPI {
+  final String email;
+  final String password;
+  final String username;
+
+  PostUserRegisterAPI({this.email, this.password, this.username,});
+
+  factory PostUserRegisterAPI.fromJson(Map<String, dynamic> json) {
+    return PostUserRegisterAPI(
+      email: json['email'],
+      password: json['password'],
+      username: json['name']
+    );
+  }
+
+  Map toMap() {
+    var map = new Map<String, dynamic>();
+    map["email"] = email;
+    map["password"] = password;
+    map["name"] = username;
+
+    return map;
+  }
+}
+Future<PostUserRegisterAPI> createUserRegisterPost(String url, {Map body}) async {
+  return http.post(url, body: body).then((http.Response response) {
+    final int statusCode = response.statusCode;
+
+    if (statusCode < 200 || statusCode > 400 || json == null) {
+      throw new Exception("Error while fetching data");
+    }
+    return PostUserRegisterAPI.fromJson(json.decode(response.body));
+  });
+}
+//-----------------------------
+
+// class for LOGIN API
+class LoginUserAPI{
+  final String email;
+  final String password;
+  final String username;
+
+  LoginUserAPI({this.email, this.password, this.username,});
+
+  factory LoginUserAPI.fromJson(Map<String, dynamic> json) {
+    return LoginUserAPI(
+      email: json['email'],
+      password: json['password'],
+    );
+  }
+
+  Map toMap() {
+    var map = new Map<String, dynamic>();
+    map["email"] = email;
+    map["password"] = password;
+    return map;
+  }
+}
+Future<LoginUserAPI> createLoginUserPost(String url, {Map body}) async {
+  return http.post(url, body: body).then((http.Response response) {
+    final int statusCode = response.statusCode;
+
+    if (statusCode < 200 || statusCode > 400 || json == null) {
+      throw new Exception("Error while fetching data");
+    }
+    return LoginUserAPI.fromJson(json.decode(response.body));
+  });
+}
+//--------------------------
+
+// class for RegisterOrgnazier API /* need modification in databas*/
+/*
+class RegisterOrgnazier {
+  final String email;
+  final String password;
+  final String username;
+
+  RegisterOrgnazier({this.email, this.password, this.username,});
+
+  factory RegisterOrgnazier.fromJson(Map<String, dynamic> json) {
+    return RegisterOrgnazier(
+      email: json['email'],
+      password: json['password'],
+      username: json['name']
+    );
+  }
+
+  Map toMap() {
+    var map = new Map<String, dynamic>();
+    map["email"] = email;
+    map["password"] = password;
+    map["name"] = username;
+
+    return map;
+  }
+}
+*/
