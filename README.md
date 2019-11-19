@@ -23,7 +23,7 @@ new assets:
 - fonts folder (contain the used fonts).
 - added new user pic in images folder.
 
-##what is insede classes:
+what is insede classes:
 - Pages/Side_Bar.dart: contain the the whole side bar menu functionality and screens
 - Pages/event_manager.dart: contain the Welcoming Screen, Create Event Screen, Edit Event Screen and all of thier functionality
 - Pages/event_manager.dart: contain the Welcoming Screen, Create Event Screen, Edit Event Screen and all of thier functionality
