@@ -17,7 +17,9 @@ added event manager screen
 - Create event form screen
 
 ### modified classes:
-- Side_Bar.dart (add route to main login screen class 'MainLogin.dart', and added route ro event manger screen 'event_manager.dart).
+- Side_Bar.dart (added route to main login screen class 'MainLogin.dart', and added route ro event manger screen 'event_manager.dart).
+- event_manager.dart (add APIs)
+- MainLogin.dart (addes APIs)
 
 ### new assets:
 - fonts folder (contain the used fonts).
@@ -26,7 +28,6 @@ added event manager screen
 
 ## what is inside classes:
 - Pages/Side_Bar.dart: contain the the whole side bar menu functionality and screens
-- Pages/event_manager.dart: contain the Welcoming Screen, Create Event Screen, Edit Event Screen and all of thier functionality
 - Pages/event_manager.dart: contain the Welcoming Screen, Create Event Screen, Edit Event Screen and all of thier functionality
 - Pages/MainLogin.dart: contain the Welcoming Screen, login Screen, registerarion type Screen, user form Screen, orgnaizer form Screen and all of thier functionality
 - Pages/home_page.dart: the home page that contain the discover view, map view, and timeline
