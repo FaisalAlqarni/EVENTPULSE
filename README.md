@@ -9,17 +9,17 @@ added the APIS
 added the Create event screen
 added event manager screen
 
-# modified screens:
+### modified screens:
 - side-bar screen
 
-# new screens:
+### new screens:
 - Event Mangement screen
 - Create event form screen
 
-# modified classes:
+### modified classes:
 - Side_Bar.dart (add route to main login screen class 'MainLogin.dart', and added route ro event manger screen 'event_manager.dart).
 
-# new assets:
+### new assets:
 - fonts folder (contain the used fonts).
 - added new user pic in images folder.
 
