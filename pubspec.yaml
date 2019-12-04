@@ -14,7 +14,7 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   shared_preferences: ^0.5.4+6
@@ -24,6 +24,7 @@ dependencies:
   http: ^0.12.0+2
   font_awesome_flutter: ^8.5.0
   curved_navigation_bar: ^0.3.1 #latest version
+  intl: ^0.16.0
   flutter:
     sdk: flutter
 
