@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:senior_project/Pages/Categoory.dart';
 //import 'package:senior_project/screens/seeAll.dart';
 import 'package:senior_project/navigation_bar.dart';
 import 'dart:convert';
@@ -7,21 +8,33 @@ import 'package:senior_project/Pages/event.dart';
 import 'package:senior_project/Pages/event_details.dart';
 
 class NewDiscover extends StatefulWidget {
-
   const NewDiscover({Key key}) : super(key: key);
   @override
   _NewDiscoverState createState() => _NewDiscoverState();
 }
 
-class _NewDiscoverState extends State<NewDiscover> with AutomaticKeepAliveClientMixin<NewDiscover>{
+class _NewDiscoverState extends State<NewDiscover>
+    with AutomaticKeepAliveClientMixin<NewDiscover> {
   final TextEditingController _searchControl = new TextEditingController();
-  var events = new List<Event>();
-
+  var eventss = new List<Event>();
+  var categ = new List<Categoory>();
+  Event x;
   _getEvents() {
     API.getEvent().then((response) {
       setState(() {
         Iterable list = json.decode(response.body);
-        events = list.map((model) => Event.fromJson(model)).toList();
+        eventss = list.map((model) => Event.fromJson(model)).toList();
+      });
+    });
+  }
+
+  _getCategoories() {
+    API.getCategory().then((response) {
+      setState(() {
+        Iterable list = json.decode(response.body);
+        print('0000000000000000000000000000000000000000000');
+        categ = list.map((model) => Categoory.fromJson(model)).toList();
+        print(categ[0].events[0].name);
       });
     });
   }
@@ -29,6 +42,7 @@ class _NewDiscoverState extends State<NewDiscover> with AutomaticKeepAliveClient
   initState() {
     super.initState();
     _getEvents();
+    _getCategoories();
   }
 
   dispose() {
@@ -36,11 +50,10 @@ class _NewDiscoverState extends State<NewDiscover> with AutomaticKeepAliveClient
   }
 
   @override
-
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-     // appBar:
+      // appBar:
       appBar: PreferredSize(
         child: Padding(
           padding: EdgeInsets.only(top: 30.0, left: 10.0, right: 10.0),
@@ -62,10 +75,14 @@ class _NewDiscoverState extends State<NewDiscover> with AutomaticKeepAliveClient
                   contentPadding: EdgeInsets.all(10.0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(color: Colors.white,),
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white,),
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                    ),
                     borderRadius: BorderRadius.circular(5.0),
                   ),
                   hintText: "Search..",
@@ -93,476 +110,117 @@ class _NewDiscoverState extends State<NewDiscover> with AutomaticKeepAliveClient
           60.0,
         ),
       ),
+
       body: Padding(
-        padding: EdgeInsets.fromLTRB(10.0,0,10.0,0),
-        child: ListView(
-          children: <Widget>[
-            SizedBox(height: 20.0),
-
-            ///////////////////////////////////////////////
-
-//////////////  Cat 1
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  "Games",
-                  style: TextStyle(
-
-                    fontSize: 23,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-
-                FlatButton(
-                  child: Text(
-                    "See all (9)",
-                    style: TextStyle(
-//                      fontSize: 22,
-//                      fontWeight: FontWeight.w800,
-                      color: Theme.of(context).accentColor,
-                    ),
-                  ),
-                  onPressed: (){
-    
-                  },
-                ),
-              ],
-            ),
-
-            SizedBox(height: 10.0),
-
-            //Horizontal List here
-            Container(
-              height: MediaQuery.of(context).size.height/6,
-              child: ListView.builder(
-
-                primary: false,
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                itemCount: events == null ? 0:events.length,
-                itemBuilder: (BuildContext context, int index) {
-
-                  return Padding(
-
-                    padding: EdgeInsets.only(right: 10.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-
-                      child: Stack(
-                        children: <Widget>[
-                      Image.network(
-                        events[index].image,
-                        height: MediaQuery.of(context).size.height/4,
-                        width: MediaQuery.of(context).size.height/4,
+        padding: EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+        child: ListView.builder(
+            primary: false,
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: categ == null ? 0 : categ.length,
+            itemBuilder: (BuildContext context, int indexOfCategories) {
+              return Column(children: <Widget>[
+                SizedBox(height: 1.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      categ[indexOfCategories].name,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 23,
+                        fontWeight: FontWeight.w800,
                       ),
-                          /*Image.asset(
-                            events[index].image,
-                            height: MediaQuery.of(context).size.height/6,
-                            width: MediaQuery.of(context).size.height/6,
-                            fit: BoxFit.cover,
-                          ),*/
+                    ),
+                  ],
+                ),
+                SizedBox(height: 3.0),
 
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                // Add one stop for each color. Stops should increase from 0 to 1
-                                stops: [0.2, 0.7],
-                                colors: [
-                                  Color.fromARGB(100, 0, 0, 0),
-                                ],
-                                // stops: [0.0, 0.1],
+                //Horizontal List here
+                Container(
+                  height: MediaQuery.of(context).size.height / 5,
+                  child: ListView.builder(
+                    primary: false,
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemCount: categ[indexOfCategories].events == null
+                        ? 0
+                        : categ[indexOfCategories].events.length,
+                    itemBuilder: (BuildContext context, int indexOfEvents) {
+                      return Padding(
+                        padding: EdgeInsets.only(right: 5.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+
+                          child: Stack(
+                            children: <Widget>[
+                              Image.network(
+                                categ[indexOfCategories]
+                                    .events[indexOfEvents]
+                                    .image,
+                                height: MediaQuery.of(context).size.height / 4,
+                                width: MediaQuery.of(context).size.height / 4,
+                                fit: BoxFit.fill,
                               ),
-                            ),
-                            height: MediaQuery.of(context).size.height/6,
-                            width: MediaQuery.of(context).size.height/6,
-                            child: new InkWell(
-                              onTap: () => {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (BuildContext context){
-                                     // print(events[index]);
-                                      return new EventDetails(rootEvent: events[index]);
-                                    },
+                              Container(
+                                height: MediaQuery.of(context).size.height / 2,
+                                width: MediaQuery.of(context).size.width / 2,
+                                child: new InkWell(
+                                  onTap: () => {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) {
+                                          for (int i = 0;
+                                              i < eventss.length;
+                                              i++) {
+                                            if (eventss[i].id ==
+                                                categ[indexOfCategories]
+                                                    .events[indexOfEvents]
+                                                    .id) {
+                                              x = eventss[i];
+                                            }
+                                          }
+                                          return new EventDetails(rootEvent: x);
+                                        },
+                                      ),
+                                    )
+                                  },
+                                ),
+                              ),
+                              Center(
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height / 6,
+                                  width: MediaQuery.of(context).size.height / 6,
+                                  padding: EdgeInsets.all(1),
+                                  constraints: BoxConstraints(
+                                    minWidth: 20,
+                                    minHeight: 20,
                                   ),
-                                )
-                              },
-                            ),
-                          ),
-
-
-                          Center(
-
-                            child: Container(
-                              height: MediaQuery.of(context).size.height/6,
-                              width: MediaQuery.of(context).size.height/6,
-                              padding: EdgeInsets.all(1),
-                              constraints: BoxConstraints(
-                                minWidth: 20,
-                                minHeight: 20,
+                                ),
                               ),
-
-                            ),
+                            ],
                           ),
-
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-
-//////////////  Cat 2
-            SizedBox(height: 20.0),
-            new Divider(
-              color: Colors.white,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  "Sport",
-                  style: TextStyle(
-                    fontSize: 23,
-                    fontWeight: FontWeight.w800,
+                        ),
+                      );
+                    },
                   ),
                 ),
-
-                FlatButton(
-                  child: Text(
-                    "See all (9)",
-                    style: TextStyle(
-//                      fontSize: 22,
-//                      fontWeight: FontWeight.w800,
-                      color: Theme.of(context).accentColor,
-                    ),
-                  ),
-                  onPressed: (){
-                 
-                  },
-                ),
-              ],
-            ),
-
-            SizedBox(height: 10.0),
-
-            //Horizontal List here
-            Container(
-              height: MediaQuery.of(context).size.height/6,
-              child: ListView.builder(
-
-                primary: false,
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                itemCount: events == null ? 0:events.length,
-                itemBuilder: (BuildContext context, int index) {
-
-                  return Padding(
-
-                    padding: EdgeInsets.only(right: 10.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-
-                      child: Stack(
-                        children: <Widget>[
-                          Image.network(
-                            events[index].image,
-                            height: MediaQuery.of(context).size.height/4,
-                            width: MediaQuery.of(context).size.height/4,
-                          ),
-                          /*Image.asset(
-                            events[index].image,
-                            height: MediaQuery.of(context).size.height/6,
-                            width: MediaQuery.of(context).size.height/6,
-                            fit: BoxFit.cover,
-                          ),*/
-
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                // Add one stop for each color. Stops should increase from 0 to 1
-                                stops: [0.2, 0.7],
-                                colors: [
-                                  Color.fromARGB(100, 0, 0, 0),
-                                ],
-                                // stops: [0.0, 0.1],
-                              ),
-                            ),
-                            height: MediaQuery.of(context).size.height/6,
-                            width: MediaQuery.of(context).size.height/6,
-                            child: new InkWell(
-                              onTap: () {
-                              
-                              },
-                            ),
-                          ),
-
-
-                          Center(
-
-                            child: Container(
-                              height: MediaQuery.of(context).size.height/6,
-                              width: MediaQuery.of(context).size.height/6,
-                              padding: EdgeInsets.all(1),
-                              constraints: BoxConstraints(
-                                minWidth: 20,
-                                minHeight: 20,
-                              ),
-
-                            ),
-                          ),
-
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-
-            //////////////  Cat 3
-            SizedBox(height: 20.0),
-            new Divider(
-              color: Colors.white,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  "Education",
-                  style: TextStyle(
-                    fontSize: 23,
-                    fontWeight: FontWeight.w800,
-                  ),
+                SizedBox(height: 5.0),
+                new Divider(
+                  thickness: 1,
+                  color: Colors.white,
+                  indent: 20,
+                  endIndent: 20,
                 ),
 
-                FlatButton(
-                  child: Text(
-                    "See all (9)",
-                    style: TextStyle(
-//                      fontSize: 22,
-//                      fontWeight: FontWeight.w800,
-                      color: Theme.of(context).accentColor,
-                    ),
-                  ),
-                  onPressed: (){
-                  /*   Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (BuildContext context){
-                          return Catagory1();
-                        },
-                      ),
-                    ); */
-                  },
-                ),
-              ],
-            ),
-
-            SizedBox(height: 10.0),
-
-            //Horizontal List here
-            Container(
-              height: MediaQuery.of(context).size.height/6,
-              child: ListView.builder(
-
-                primary: false,
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                itemCount: events == null ? 0:events.length,
-                itemBuilder: (BuildContext context, int index) {
-
-                  return Padding(
-
-                    padding: EdgeInsets.only(right: 10.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-
-                      child: Stack(
-                        children: <Widget>[
-                          Image.network(
-                            events[index].image,
-                            height: MediaQuery.of(context).size.height/4,
-                            width: MediaQuery.of(context).size.height/4,
-                          ),
-                          /*Image.asset(
-                            events[index].image,
-                            height: MediaQuery.of(context).size.height/6,
-                            width: MediaQuery.of(context).size.height/6,
-                            fit: BoxFit.cover,
-                          ),*/
-
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                // Add one stop for each color. Stops should increase from 0 to 1
-                                stops: [0.2, 0.7],
-                                colors: [
-                                  Color.fromARGB(100, 0, 0, 0),
-                                ],
-                                // stops: [0.0, 0.1],
-                              ),
-                            ),
-                            height: MediaQuery.of(context).size.height/6,
-                            width: MediaQuery.of(context).size.height/6,
-                            child: new InkWell(
-                              onTap: () {
-                              
-                              },
-                            ),
-                          ),
-
-
-                          Center(
-
-                            child: Container(
-                              height: MediaQuery.of(context).size.height/6,
-                              width: MediaQuery.of(context).size.height/6,
-                              padding: EdgeInsets.all(1),
-                              constraints: BoxConstraints(
-                                minWidth: 20,
-                                minHeight: 20,
-                              ),
-
-                            ),
-                          ),
-
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-
-            //////////////  Cat 4
-            SizedBox(height: 10.0),
-            new Divider(
-              color: Colors.white,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  "Music",
-                  style: TextStyle(
-                    fontSize: 23,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-
-                FlatButton(
-                  child: Text(
-                    "See all (9)",
-                    style: TextStyle(
-//                      fontSize: 22,
-//                      fontWeight: FontWeight.w800,
-                      color: Theme.of(context).accentColor,
-                    ),
-                  ),
-                  onPressed: (){
-                    
-                  },
-                ),
-              ],
-            ),
-
-            SizedBox(height: 10.0),
-
-            //Horizontal List here
-            Container(
-              height: MediaQuery.of(context).size.height/6,
-              child: ListView.builder(
-
-                primary: false,
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                itemCount: events == null ? 0:events.length,
-                itemBuilder: (BuildContext context, int index) {
-
-                  return Padding(
-
-                    padding: EdgeInsets.only(right: 10.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-
-                      child: Stack(
-                        children: <Widget>[
-                          Image.network(
-                            events[index].image,
-                            height: MediaQuery.of(context).size.height/4,
-                            width: MediaQuery.of(context).size.height/4,
-                          ),
-                          /*Image.asset(
-                            events[index].image,
-                            height: MediaQuery.of(context).size.height/6,
-                            width: MediaQuery.of(context).size.height/6,
-                            fit: BoxFit.cover,
-                          ),*/
-
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                // Add one stop for each color. Stops should increase from 0 to 1
-                                stops: [0.2, 0.7],
-                                colors: [
-                                  Color.fromARGB(100, 0, 0, 0),
-                                ],
-                                // stops: [0.0, 0.1],
-                              ),
-                            ),
-                            height: MediaQuery.of(context).size.height/6,
-                            width: MediaQuery.of(context).size.height/6,
-                            child: new InkWell(
-                              onTap: () {
-                                
-                              },
-                            ),
-                          ),
-
-
-                          Center(
-
-                            child: Container(
-                              height: MediaQuery.of(context).size.height/6,
-                              width: MediaQuery.of(context).size.height/6,
-                              padding: EdgeInsets.all(1),
-                              constraints: BoxConstraints(
-                                minWidth: 20,
-                                minHeight: 20,
-                              ),
-
-                            ),
-                          ),
-
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 20.0),
-
-          ],
-        ),
+                
+              ]);
+            }),
       ),
-      //bottomNavigationBar: NavigationBar(currindx: 1),
     );
-
   }
 
   @override
   bool get wantKeepAlive => true;
-
-
 }
