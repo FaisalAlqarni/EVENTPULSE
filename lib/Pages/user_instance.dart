@@ -1,3 +1,5 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
 class UserInstance {
   static final UserInstance _instance = UserInstance._internal();
 
@@ -6,6 +8,8 @@ class UserInstance {
   String email;
   String token;
   String avatar;
+
+  Future<SharedPreferences> _test = SharedPreferences.getInstance();
 
   factory UserInstance() {
     return _instance;
@@ -33,10 +37,46 @@ class UserInstance {
   }
 
   void distroyUser() {
-     _instance.token = null;
+    _instance.token = null;
     _instance.avatar = null;
     _instance.name = null;
     _instance.email = null;
     _instance.id = null;
+    killUser();
+  }
+
+  persistUser() async {
+    SharedPreferences storedUser = await SharedPreferences.getInstance();
+
+    storedUser.setInt('id', _instance.id);
+    storedUser.setString('token', _instance.token);
+    storedUser.setString('name', _instance.name);
+    storedUser.setString('avatar', _instance.avatar);
+    storedUser.setString('email', _instance.email);
+    print("BECOME thot");
+    print(storedUser.getString('email'));
+  }
+
+  assignUserFromDefaults() async {
+    SharedPreferences storedUser = await SharedPreferences.getInstance();
+    bool doesExsist = storedUser.containsKey('token');
+
+    if (doesExsist) {
+      _instance.id = storedUser.getInt('id');
+      _instance.token = storedUser.getString('token');
+      _instance.name = storedUser.getString('name');
+      _instance.avatar = storedUser.getString('avatar');
+      _instance.email = storedUser.getString('email');
+    }
+  }
+
+  killUser() async {
+    SharedPreferences storedUser = await SharedPreferences.getInstance();
+
+    storedUser.remove('id');
+    storedUser.remove('token');
+    storedUser.remove('name');
+    storedUser.remove('avatar');
+    storedUser.remove('email');
   }
 }

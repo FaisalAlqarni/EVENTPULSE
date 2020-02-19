@@ -1,0 +1,123 @@
+Flutter crash report; please file at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter build appbundle
+
+## exception
+
+ProcessException: ProcessException: The requested operation requires elevation.
+
+  Command: "C:\Program Files\Android\Android Studio\jre\bin\java.EXE" -version
+
+```
+#0      _ProcessImpl._runAndWait (dart:io-patch/process_patch.dart:496:7)
+#1      _runNonInteractiveProcessSync (dart:io-patch/process_patch.dart:641:18)
+#2      Process.runSync (dart:io-patch/process_patch.dart:66:12)
+#3      LocalProcessManager.runSync (package:process/src/interface/local_process_manager.dart:93:20)
+#4      AndroidStudio._init (package:flutter_tools/src/android/android_studio.dart:293:51)
+#5      new AndroidStudio (package:flutter_tools/src/android/android_studio.dart:39:5)
+#6      new AndroidStudio.fromHomeDot (package:flutter_tools/src/android/android_studio.dart:95:14)
+#7      AndroidStudio._allLinuxOrWindows (package:flutter_tools/src/android/android_studio.dart:237:54)
+#8      AndroidStudio.allInstalled (package:flutter_tools/src/android/android_studio.dart:170:40)
+#9      AndroidStudio.latestValid (package:flutter_tools/src/android/android_studio.dart:160:41)
+#10     AppContext._generateIfNecessary.<anonymous closure> (package:flutter_tools/src/base/context.dart:99:41)
+#11     _LinkedHashMapMixin.putIfAbsent (dart:collection-patch/compact_hash.dart:291:23)
+#12     AppContext._generateIfNecessary (package:flutter_tools/src/base/context.dart:87:20)
+#13     AppContext.get (package:flutter_tools/src/base/context.dart:115:32)
+#14     AppContext.get (package:flutter_tools/src/base/context.dart:113:23)
+#15     AppContext.get (package:flutter_tools/src/base/context.dart:113:23)
+#16     androidStudio (package:flutter_tools/src/android/android_studio.dart:15:44)
+#17     javaPath (package:flutter_tools/src/android/android_studio.dart:29:24)
+#18     _gradleEnv (package:flutter_tools/src/android/gradle.dart:853:7)
+#19     _initializeGradle (package:flutter_tools/src/android/gradle.dart:300:62)
+<asynchronous suspension>
+#20     _ensureGradle (package:flutter_tools/src/android/gradle.dart:281:37)
+<asynchronous suspension>
+#21     buildGradleProject (package:flutter_tools/src/android/gradle.dart:484:31)
+<asynchronous suspension>
+#22     buildAppBundle (package:flutter_tools/src/android/app_bundle.dart:43:10)
+<asynchronous suspension>
+#23     BuildAppBundleCommand.runCommand (package:flutter_tools/src/commands/build_appbundle.dart:47:11)
+<asynchronous suspension>
+#24     FlutterCommand.verifyThenRunCommand (package:flutter_tools/src/runner/flutter_command.dart:490:18)
+#25     _asyncThenWrapperHelper.<anonymous closure> (dart:async-patch/async_patch.dart:71:64)
+#26     _rootRunUnary (dart:async/zone.dart:1132:38)
+#27     _CustomZone.runUnary (dart:async/zone.dart:1029:19)
+#28     _FutureListener.handleValue (dart:async/future_impl.dart:137:18)
+#29     Future._propagateToListeners.handleValueCallback (dart:async/future_impl.dart:678:45)
+#30     Future._propagateToListeners (dart:async/future_impl.dart:707:32)
+#31     Future._completeWithValue (dart:async/future_impl.dart:522:5)
+#32     Future._asyncComplete.<anonymous closure> (dart:async/future_impl.dart:552:7)
+#33     _rootRun (dart:async/zone.dart:1124:13)
+#34     _CustomZone.run (dart:async/zone.dart:1021:19)
+#35     _CustomZone.runGuarded (dart:async/zone.dart:923:7)
+#36     _CustomZone.bindCallbackGuarded.<anonymous closure> (dart:async/zone.dart:963:23)
+#37     _microtaskLoop (dart:async/schedule_microtask.dart:41:21)
+#38     _startMicrotaskLoop (dart:async/schedule_microtask.dart:50:5)
+#39     _runPendingImmediateCallback (dart:isolate-patch/isolate_patch.dart:116:13)
+#40     _RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:173:5)
+```
+
+## flutter doctor
+
+```
+encountered exception: ProcessException: The requested operation requires elevation.
+
+  Command: "C:\Program Files\Android\Android Studio\jre\bin\java.EXE" -version
+
+#0      _ProcessImpl._runAndWait (dart:io-patch/process_patch.dart:496:7)
+#1      _runNonInteractiveProcessSync (dart:io-patch/process_patch.dart:641:18)
+#2      Process.runSync (dart:io-patch/process_patch.dart:66:12)
+#3      LocalProcessManager.runSync (package:process/src/interface/local_process_manager.dart:93:20)
+#4      AndroidStudio._init (package:flutter_tools/src/android/android_studio.dart:293:51)
+#5      new AndroidStudio (package:flutter_tools/src/android/android_studio.dart:39:5)
+#6      new AndroidStudio.fromHomeDot (package:flutter_tools/src/android/android_studio.dart:95:14)
+#7      AndroidStudio._allLinuxOrWindows (package:flutter_tools/src/android/android_studio.dart:237:54)
+#8      AndroidStudio.allInstalled (package:flutter_tools/src/android/android_studio.dart:170:40)
+#9      AndroidStudioValidator.allValidators (package:flutter_tools/src/android/android_studio_validator.dart:20:55)
+#10     _DefaultDoctorValidatorsProvider.validators (package:flutter_tools/src/doctor.dart:63:35)
+#11     Doctor.validators (package:flutter_tools/src/doctor.dart:132:46)
+#12     Doctor.startValidatorTasks (package:flutter_tools/src/doctor.dart:139:39)
+#13     Doctor.diagnose (package:flutter_tools/src/doctor.dart:211:41)
+<asynchronous suspension>
+#14     _doctorText.<anonymous closure> (package:flutter_tools/runner.dart:202:26)
+#15     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:29)
+<asynchronous suspension>
+#16     _rootRun (dart:async/zone.dart:1124:13)
+#17     _CustomZone.run (dart:async/zone.dart:1021:19)
+#18     _runZoned (dart:async/zone.dart:1516:10)
+#19     runZoned (dart:async/zone.dart:1463:12)
+#20     AppContext.run (package:flutter_tools/src/base/context.dart:153:18)
+<asynchronous suspension>
+#21     _doctorText (package:flutter_tools/runner.dart:201:19)
+<asynchronous suspension>
+#22     _createLocalCrashReport (package:flutter_tools/runner.dart:179:32)
+<asynchronous suspension>
+#23     _handleToolError (package:flutter_tools/runner.dart:134:33)
+<asynchronous suspension>
+#24     run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:68:22)
+<asynchronous suspension>
+#25     _rootRun (dart:async/zone.dart:1124:13)
+#26     _CustomZone.run (dart:async/zone.dart:1021:19)
+#27     _runZoned (dart:async/zone.dart:1516:10)
+#28     runZoned (dart:async/zone.dart:1500:12)
+#29     run.<anonymous closure> (package:flutter_tools/runner.dart:61:18)
+<asynchronous suspension>
+#30     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:29)
+<asynchronous suspension>
+#31     _rootRun (dart:async/zone.dart:1124:13)
+#32     _CustomZone.run (dart:async/zone.dart:1021:19)
+#33     _runZoned (dart:async/zone.dart:1516:10)
+#34     runZoned (dart:async/zone.dart:1463:12)
+#35     AppContext.run (package:flutter_tools/src/base/context.dart:153:18)
+<asynchronous suspension>
+#36     runInContext (package:flutter_tools/src/context_runner.dart:59:24)
+<asynchronous suspension>
+#37     run (package:flutter_tools/runner.dart:50:10)
+#38     main (package:flutter_tools/executable.dart:65:9)
+<asynchronous suspension>
+#39     main (file:///C:/b/s/w/ir/k/archive/flutter/packages/flutter_tools/bin/flutter_tools.dart:8:3)
+#40     _startIsolate.<anonymous closure> (dart:isolate-patch/isolate_patch.dart:303:32)
+#41     _RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:172:12)
+```

@@ -6,13 +6,13 @@ class Review {
   int id;
   String title;
   String meat;
-  File image;
   double rating;
   int event_id;
   int user_id;
+  String user_name;
   List<Comment> comments = List<Comment>();
 
-  Review(this.id, this.title, this.meat, this.image, this.rating, this.event_id, this.user_id, this.comments);
+  Review(this.id, this.title, this.meat, this.rating, this.event_id, this.user_id, this.user_name, this.comments);
 
   factory Review.fromJson(Map<String, dynamic> json) {
     var json_comments  = json['comments'];
@@ -26,9 +26,8 @@ class Review {
         Comment temp = Comment.fromJson(i);
         parsedComments.add(temp);
       }
-
-    return Review(json['id'], json['title'], json['meat'], json['image'],
-        json['rating'],json['event_id'],json['user_id'],parsedComments);
+    print("NEAR");
+    return Review(json['id'], json['title'], json['meat'], json['rating'].toDouble(),json['event_id'],json['user_id'],json['user_name'], parsedComments);
   }
 
 /*   void configureComments(){

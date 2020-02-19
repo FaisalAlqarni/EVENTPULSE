@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:senior_project/Pages/user_instance.dart';
-import 'package:senior_project/clipper.dart';
-import '../navigation_bar.dart';
+import 'package:EventPulse/Pages/user_instance.dart';
 import 'API.dart';
-import 'Discover/discoverpage.dart';
 import 'Navigation/navigation_controler.dart';
-import 'Profile/user_details_page.dart';
+import 'package:email_validator/email_validator.dart';
 
 class MainLogin extends StatefulWidget {
   const MainLogin({Key key}) : super(key: key);
@@ -14,6 +11,8 @@ class MainLogin extends StatefulWidget {
 }
 
 class _HomeState extends State<MainLogin> {
+  final formKey = GlobalKey<FormState>();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   static final USER_RIGESTER_POST_URL =
       'http://event-discoverer-backend.herokuapp.com/api/register';
   static final ORGNAIZER_RIGESTER_POST_URL =
@@ -26,10 +25,10 @@ class _HomeState extends State<MainLogin> {
   TextEditingController _usernameController = new TextEditingController();
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
-
+  String _email;
   @override
   Widget build(BuildContext context) {
-    Color primary = Theme.of(context).primaryColor;
+    Color primary = Theme.of(context).primaryColorDark;
     void initState() {
       super.initState();
     }
@@ -60,14 +59,18 @@ class _HomeState extends State<MainLogin> {
                 child: Container(
                     height: 154,
                     child: Align(
-                      child: Text(
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        width: 150,
+                      ),
+                      /* Text(
                         "Hi",
                         style: TextStyle(
                           fontSize: 110,
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).primaryColorDark,
                         ),
-                      ),
+                      ), */
                     )),
               ),
               Positioned(
@@ -113,20 +116,21 @@ class _HomeState extends State<MainLogin> {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30),
                 borderSide: BorderSide(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).primaryColorDark,
                   width: 2,
                 ),
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30),
                 borderSide: BorderSide(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).primaryColorDark,
                   width: 3,
                 ),
               ),
               prefixIcon: Padding(
                 child: IconTheme(
-                  data: IconThemeData(color: Theme.of(context).primaryColor),
+                  data:
+                      IconThemeData(color: Theme.of(context).primaryColorDark),
                   child: icon,
                 ),
                 padding: EdgeInsets.only(left: 30, right: 10),
@@ -192,13 +196,13 @@ class _HomeState extends State<MainLogin> {
       } else {
         _emailController.clear();
         _passwordController.clear();
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (BuildContext context) => NavigationBarController()));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => NavigationBarController()));
       }
     }
 
     Future _registerUser() async {
-      var email = _emailController.text;
+      var email = _email;
       var password = _passwordController.text;
       var username = _usernameController.text;
 
@@ -209,8 +213,20 @@ class _HomeState extends State<MainLogin> {
       } else {
         _emailController.clear();
         _passwordController.clear();
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (BuildContext context) => ProfilePage()));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => NavigationBarController()));
+      }
+    }
+
+    void _submitCommand() {
+      final form = formKey.currentState;
+
+      if (form.validate()) {
+        form.save();
+
+        // Email & password matched our validation rules
+        // and are saved to _email and _password fields.
+        _registerUser();
       }
     }
 
@@ -241,7 +257,7 @@ class _HomeState extends State<MainLogin> {
                             icon: Icon(
                               Icons.close,
                               size: 30.0,
-                              color: Theme.of(context).primaryColor,
+                              color: Theme.of(context).primaryColorDark,
                             ),
                           ),
                         )
@@ -322,7 +338,7 @@ class _HomeState extends State<MainLogin> {
     void _registerUserSheet() {
       _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
         return DecoratedBox(
-          decoration: BoxDecoration(color: Theme.of(context).canvasColor),
+          decoration: BoxDecoration(color: Theme.of(context).primaryColor),
           child: ClipRRect(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(40.0),
@@ -348,7 +364,7 @@ class _HomeState extends State<MainLogin> {
                             icon: Icon(
                               Icons.close,
                               size: 30.0,
-                              color: Theme.of(context).primaryColor,
+                              color: Colors.white,
                             ),
                           ),
                         )
@@ -374,7 +390,7 @@ class _HomeState extends State<MainLogin> {
                                         image: AssetImage(
                                             'assets/images/logo.png'),
                                       ),
-                                      color: Theme.of(context).canvasColor),
+                                      color: Colors.white),
                                 ),
                                 alignment: Alignment.center,
                               ),
@@ -385,31 +401,70 @@ class _HomeState extends State<MainLogin> {
                       Padding(
                         padding: EdgeInsets.only(
                           bottom: 20,
-                          top: 40,
+                          top: 20,
                         ),
-                        child: _input(Icon(Icons.arrow_forward_ios),
-                            "FIRST NAME", _firstNameController, false),
                       ),
                       Padding(
                         padding: EdgeInsets.only(
                           bottom: 20,
                         ),
-                        child: _input(Icon(Icons.arrow_forward_ios),
-                            "LAST NAME", _lastNameController, false),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          bottom: 20,
-                        ),
-                        child: _input(Icon(Icons.account_circle), "USERNAME",
+                        child: _input(Icon(Icons.account_circle), "NAME",
                             _usernameController, false),
                       ),
                       Padding(
                         padding: EdgeInsets.only(
                           bottom: 20,
                         ),
-                        child: _input(Icon(Icons.email), "EMAIL",
-                            _emailController, false),
+                        /* child: _input(Icon(Icons.email), "EMAIL",
+                            _emailController, false), */
+                        child: Container(
+                            padding: EdgeInsets.only(left: 20, right: 20),
+                            child: Form(
+                              key: formKey,
+                              child: TextFormField(
+                                validator: (val) =>
+                                    !EmailValidator.validate(val, true)
+                                        ? 'Not a valid email.'
+                                        : null,
+                                onSaved: (val) => _email = val,
+                                //controller: controller,
+                                //obscureText: obsecure,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
+                                decoration: InputDecoration(
+                                    hintStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20),
+                                    hintText: "EMAIL",
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: BorderSide(
+                                        color:
+                                            Theme.of(context).primaryColorDark,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: BorderSide(
+                                        color:
+                                            Theme.of(context).primaryColorDark,
+                                        width: 3,
+                                      ),
+                                    ),
+                                    prefixIcon: Padding(
+                                      child: IconTheme(
+                                        data: IconThemeData(
+                                            color: Theme.of(context)
+                                                .primaryColorDark),
+                                        child: Icon(Icons.email),
+                                      ),
+                                      padding:
+                                          EdgeInsets.only(left: 30, right: 10),
+                                    )),
+                              ),
+                            )),
                       ),
                       Padding(
                         padding: EdgeInsets.only(bottom: 20),
@@ -423,7 +478,7 @@ class _HomeState extends State<MainLogin> {
                             bottom: MediaQuery.of(context).viewInsets.bottom),
                         child: Container(
                           child: _button("REGISTER", Colors.white, primary,
-                              primary, Colors.white, _registerUser),
+                              primary, Colors.white, _submitCommand),
                           height: 50,
                           width: MediaQuery.of(context).size.width,
                         ),
@@ -446,62 +501,50 @@ class _HomeState extends State<MainLogin> {
 
     //main screen
     return Scaffold(
-        resizeToAvoidBottomPadding: false,
-        key: _scaffoldKey,
-        backgroundColor: Theme.of(context).primaryColor,
-        body: Column(
-          children: <Widget>[
-            logo(),
-            Padding(
-              child: Container(
-                child: _button("LOGIN", primary, Colors.white, Colors.white,
-                    primary, _loginSheet),
-                height: 50,
-              ),
-              padding: EdgeInsets.only(top: 80, left: 20, right: 20),
-            ),
-            Padding(
-              child: Container(
-                child: OutlineButton(
-                  highlightedBorderColor: Colors.white,
-                  borderSide: BorderSide(color: Colors.white, width: 2.0),
-                  highlightElevation: 0.0,
-                  splashColor: Colors.white,
-                  highlightColor: Theme.of(context).primaryColor,
-                  color: Theme.of(context).primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(30.0),
-                  ),
-                  child: Text(
-                    "REGISTER",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20),
-                  ),
-                  onPressed: () {
-                    _registerUserSheet();
-                  },
+      resizeToAvoidBottomPadding: false,
+      key: _scaffoldKey,
+      backgroundColor: Theme.of(context).primaryColorDark,
+      body: Column(
+        children: <Widget>[
+          logo(),
+          Padding(
+            child: Container(
+              child: OutlineButton(
+                highlightedBorderColor: Colors.white,
+                borderSide: BorderSide(color: Colors.white, width: 2.0),
+                highlightElevation: 0.0,
+                splashColor: Colors.white,
+                highlightColor: Theme.of(context).primaryColor,
+                color: Theme.of(context).primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(30.0),
                 ),
-                height: 50,
-              ),
-              padding: EdgeInsets.only(top: 10, left: 20, right: 20),
-            ),
-            Expanded(
-              child: Align(
-                child: ClipPath(
-                  child: Container(
-                    color: Colors.white,
-                    height: 300,
-                  ),
-                  clipper: BottomWaveClipper(),
+                child: Text(
+                  "LOGIN",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 20),
                 ),
-                alignment: Alignment.bottomCenter,
+                onPressed: () {
+                  _loginSheet();
+                },
               ),
-            )
-          ],
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-        ),
-        );
+              height: 50,
+            ),
+            padding: EdgeInsets.only(top: 80, left: 20, right: 20),
+          ),
+          Padding(
+            child: Container(
+              child: _button("REGISTER", primary, Colors.white, Colors.white,
+                  primary, _registerUserSheet),
+              height: 50,
+            ),
+            padding: EdgeInsets.only(top: 10, left: 20, right: 20),
+          ),
+        ],
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+      ),
+    );
   }
 }

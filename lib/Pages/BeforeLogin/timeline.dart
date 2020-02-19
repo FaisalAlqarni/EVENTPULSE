@@ -6,8 +6,7 @@ it contain the navigation bar and call the other classes
 
 //import the necessary classes
 import 'package:flutter/material.dart';
-import 'package:senior_project/navigation_bar.dart';
-import 'package:senior_project/topBar.dart';
+import 'package:EventPulse/topBar.dart';
 
 //no need to modify this
 class TimelinePage extends StatefulWidget {

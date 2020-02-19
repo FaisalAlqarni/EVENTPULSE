@@ -1,19 +1,27 @@
 import 'dart:convert';
 
+import 'package:search_widget/search_widget.dart';
+import 'package:EventPulse/Pages/Categoory.dart';
 import 'package:flutter/material.dart';
-import 'package:senior_project/Pages/API.dart';
-import 'package:senior_project/Pages/MainLogin.dart';
-import 'package:senior_project/Pages/event.dart';
-import 'package:senior_project/Pages/event_details.dart';
-import 'customIcons.dart';
+import 'package:EventPulse/Pages/API.dart';
+import 'package:EventPulse/Pages/Discover/discoverpage.dart';
+import 'package:EventPulse/Pages/MainLogin.dart';
+import 'package:EventPulse/Pages/event.dart';
+/* import 'package:EventPulse/Pages/event_details.dart';
+import 'customIcons.dart'; */
 import 'dart:math';
+
+import 'package:EventPulse/Pages/event_details.dart';
+import 'package:EventPulse/topBar.dart';
 
 var images = new List<String>();
 var name = new List<String>();
 var start_date = new List<String>();
 var end_date = new List<String>();
-
+var events = new List<Event>();
 class DiscoverPageNew extends StatefulWidget {
+    const DiscoverPageNew({Key key}) : super(key: key);
+
   @override
   _DiscoverPageState createState() => new _DiscoverPageState();
 }
@@ -22,13 +30,14 @@ var cardAspectRatio = 12.0 / 16.0;
 var widgetAspectRatio = cardAspectRatio * 1.2;
 
 class _DiscoverPageState extends State<DiscoverPageNew> {
-  var events = new List<Event>();
+  
+  var catg = new List<Categoory>();
   static int length;
   _getEvents() {
     API.getEvent().then((response) {
       setState(() {
-        Iterable list = json.decode(response.body);
-        events = list.map((model) => Event.fromJson(model)).toList();
+      //  Iterable list = json.decode(response.body);
+     //   events = list.map((model) => Event.fromJson(model)).toList();
       });
       length = events.length;
       images.length = length;
@@ -78,29 +87,47 @@ class _DiscoverPageState extends State<DiscoverPageNew> {
               end: Alignment.topCenter,
               tileMode: TileMode.clamp)),
       child: Scaffold(
-        appBar: AppBar(),
-        backgroundColor: Colors.deepPurple,
+        appBar: TopBar(pageTitle: '', height: 60,),
+        backgroundColor: Theme.of(context).primaryColor,
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 12.0, right: 12.0, top: 30.0, bottom: 8.0),
-                child: Row(
-                  //Here is the search bar
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Icons.search,
-                        color: Colors.white,
-                        size: 40.0,
-                      ),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ),
-
+              SearchWidget<Event>(
+                    dataList: events,
+                    hideSearchBoxWhenItemSelected: false,
+                    listContainerHeight: MediaQuery.of(context).size.height / 2,
+                    queryBuilder: (query, eventss) {
+                      return eventss
+                          .where((eventss) => eventss.name
+                              .toLowerCase()
+                              .contains(query.toLowerCase()))
+                          .toList();
+                    },
+                    popupListItemBuilder: (eventss) {
+                      return PopupListItemWidget(eventss);
+                    },
+                    selectedItemBuilder: (selectedItem, deleteSelectedItem) {
+                      //return SelectedItemWidget(selectedItem, deleteSelectedItem);
+                    },
+                    // widget customization
+                    //noItemsFoundWidget: NoItemsFound(),
+                    textFieldBuilder: (controller, focusNode) {
+                      return MyTextField(controller, focusNode);
+                    },
+                    onItemSelected: (item) {
+                      setState(
+                        () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return new EventDetails(rootEvent: item);
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
               //First catagory
               Padding(
                 //The category title + option button ...
@@ -108,74 +135,42 @@ class _DiscoverPageState extends State<DiscoverPageNew> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text("Trending",
+                    Text("Events",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Theme.of(context).primaryColorDark,
                           fontSize: 46.0,
                           fontFamily: "Calibre-Semibold",
                           letterSpacing: 1.0,
                         )),
-                    IconButton(
-                      icon: Icon(
-                        CustomIcons.option,
-                        size: 12.0,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        new MaterialPageRoute(
-                          builder: (c) {
-                            return new EventDetails();
-                          },
-                        );
-                      },
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20.0),
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xFFff6e6e),
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 22.0, vertical: 6.0),
-                          child: Text(length.toString() + " Events",
-                              style: TextStyle(color: Colors.white)),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
               Stack(
                 children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.play_arrow),
-                    color: Colors.black,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => MainLogin()),
-                      );
-                    },
-                  ),
                   CardScrollWidget(currentPage),
                   Positioned.fill(
                     child: PageView.builder(
-                      itemCount: images.length,
+                      itemCount: events.length,
                       controller: controller,
                       reverse: true,
                       itemBuilder: (context, index) {
-                        return Container();
+
+                         Container();
                       },
                     ),
-                  )
+                  ),
+
+                  /* IconButton(
+                    iconSize: 50,
+                    icon: Icon(Icons.play_arrow),
+                    color: Colors.black,
+                    onPressed: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MainLogin()),
+                      )
+                    },
+                  ), */
                 ],
               ),
 
@@ -278,7 +273,7 @@ class CardScrollWidget extends StatelessWidget {
 
         List<Widget> cardList = new List();
 
-        for (var i = 0; i < images.length; i++) {
+        for (var i = 0; i < events.length; i++) {
           var delta = i - currentPage;
           bool isOnRight = delta > 0;
 
@@ -293,7 +288,14 @@ class CardScrollWidget extends StatelessWidget {
             bottom: padding + verticalInset * max(-delta, 0.0),
             start: start,
             textDirection: TextDirection.rtl,
-            child: ClipRRect(
+            child: InkWell(
+              onTap: () => {
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MainLogin()),
+                      )
+                        },
+              child: ClipRRect(
               borderRadius: BorderRadius.circular(16.0),
               child: Container(
                 decoration: BoxDecoration(color: Colors.white, boxShadow: [
@@ -307,7 +309,11 @@ class CardScrollWidget extends StatelessWidget {
                   child: Stack(
                     fit: StackFit.expand,
                     children: <Widget>[
-                      Image.network(images[i], fit: BoxFit.cover),
+                      
+                        
+                       Image.network(images[i], fit: BoxFit.cover),                  
+                      
+                      
 
                       //The title of each event card
                       Align(
@@ -321,32 +327,18 @@ class CardScrollWidget extends StatelessWidget {
                                   horizontal: 16.0, vertical: 8.0),
                               child: Text(name[i],
                                   style: TextStyle(
-                                      color: Colors.white,
+                                      color: Theme.of(context).primaryColorDark,
+                                      backgroundColor: Theme.of(context).primaryColor,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 30.0,
-                                      fontFamily: "SF-Pro-Text-Regular")),
+                                      fontSize: 27.0,
+                                      /* fontFamily: "SF-Pro-Text-Regular" */)),
                             ),
 
                             //Read Later Box
                             SizedBox(
                               height: 10.0,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 12.0, bottom: 12.0),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 22.0, vertical: 6.0),
-                                decoration: BoxDecoration(
-                                    color: Colors.deepPurpleAccent[100],
-                                    borderRadius: BorderRadius.circular(20.0)),
-                                child: Text(start_date[i] + ' - ' + end_date[i],
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    )),
-                              ),
-                            )
+                            
                           ],
                         ),
                       )
@@ -354,7 +346,7 @@ class CardScrollWidget extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
+           ), ),
           );
           cardList.add(cardItem);
         }

@@ -20,10 +20,13 @@ class MyApp extends StatelessWidget {
           title: 'Social Event Discoverer',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-              hintColor: Colors.deepPurple,
-              primaryColor: Colors.deepPurple,
+              hintColor: Color(0xff486581),
+              primaryColor: Color(0xffD9E2EC),
               fontFamily: "Montserrat",
-              canvasColor: Colors.deepPurple),
+              canvasColor: Color(0xffF0F4F8),
+              primaryColorDark: Color(0xff486581)
+              //backgroundColor: ,
+              ),
           initialRoute: '/',
           routes: {'/': (context) => NavigationBarController()},
         ));

@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:senior_project/clipper.dart';
+import 'package:EventPulse/clipper.dart';
 
 import 'Discover/discoverpage.dart';
 
-class EventManager extends StatefulWidget {
+class EventManageRr extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
@@ -27,7 +27,7 @@ class Categories {
   }
 }
 
-class _HomeState extends State<EventManager> {
+class _HomeState extends State<EventManageRr> {
   static final CREATE_EVENT_POST_URL =
       'http://event-discoverer-backend.herokuapp.com/api/events';
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:senior_project/Pages/Categoory.dart';
-//import 'package:senior_project/screens/seeAll.dart';
-import 'package:senior_project/navigation_bar.dart';
+import 'package:search_widget/search_widget.dart';
+import 'package:EventPulse/Pages/Categoory.dart';
+import 'package:EventPulse/Pages/Discover/sliding_cards.dart';
 import 'dart:convert';
-import 'package:senior_project/Pages/API.dart';
-import 'package:senior_project/Pages/event.dart';
-import 'package:senior_project/Pages/event_details.dart';
+import 'package:EventPulse/Pages/API.dart';
+import 'package:EventPulse/Pages/event.dart';
+import 'package:EventPulse/Pages/event_details.dart';
+import 'package:intl/intl.dart';
+
+import '../event_coordinator.dart';
 
 class NewDiscover extends StatefulWidget {
   const NewDiscover({Key key}) : super(key: key);
@@ -13,13 +16,98 @@ class NewDiscover extends StatefulWidget {
   _NewDiscoverState createState() => _NewDiscoverState();
 }
 
+/// search classes
+class PopupListItemWidget extends StatelessWidget {
+  const PopupListItemWidget(this.eventss);
+  final Event eventss;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      child: Row(
+        children: <Widget>[
+          CircleAvatar(
+            backgroundImage: new NetworkImage(eventss.image),
+          ),
+          Text(
+            '  ' + eventss.name,
+            style: TextStyle(
+                fontSize: 16, color: Theme.of(context).primaryColorDark),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MyTextField extends StatelessWidget {
+  const MyTextField(this.controller, this.focusNode);
+
+  final TextEditingController controller;
+  final FocusNode focusNode;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      focusNode: focusNode,
+      style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColorDark),
+      decoration: InputDecoration(
+        enabledBorder: const OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Color(0x4437474F),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).primaryColor),
+        ),
+        suffixIcon: Icon(Icons.search),
+        border: InputBorder.none,
+        hintText: "Search here...",
+        contentPadding: const EdgeInsets.only(
+          left: 16,
+          right: 20,
+          top: 14,
+          bottom: 14,
+        ),
+      ),
+    );
+  }
+}
+
+class NoItemsFound extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Icon(
+          Icons.folder_open,
+          size: 24,
+          color: Colors.grey[900].withOpacity(0.7),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          "No Items Found",
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey[900].withOpacity(0.7),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _NewDiscoverState extends State<NewDiscover>
     with AutomaticKeepAliveClientMixin<NewDiscover> {
   final TextEditingController _searchControl = new TextEditingController();
+  static EventCoordinator eventCoordinator = new EventCoordinator();
   var eventss = new List<Event>();
   var categ = new List<Categoory>();
   Event x;
-  _getEvents() {
+/*   _getEvents() {
     API.getEvent().then((response) {
       setState(() {
         Iterable list = json.decode(response.body);
@@ -37,12 +125,24 @@ class _NewDiscoverState extends State<NewDiscover>
         print(categ[0].events[0].name);
       });
     });
+  } */
+
+  _injectData() async {
+    await eventCoordinator.downloadEvents();
+    await eventCoordinator.downloadCategoories();
+    if (mounted) {
+      setState(() {
+        eventss = eventCoordinator.returnEvents();
+        categ = eventCoordinator.returnCategoories();
+      });
+    }
   }
 
   initState() {
     super.initState();
-    _getEvents();
-    _getCategoories();
+    _injectData();
+    //_getEvents();
+    //_getCategoories();
   }
 
   dispose() {
@@ -66,53 +166,57 @@ class _NewDiscoverState extends State<NewDiscover>
                   Radius.circular(5.0),
                 ),
               ),
-              child: TextField(
-                style: TextStyle(
-                  fontSize: 15.0,
-                  color: Colors.black,
-                ),
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.all(10.0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                    ),
+              child: Column(
+                children: <Widget>[
+                  SearchWidget<Event>(
+                    dataList: eventss,
+                    hideSearchBoxWhenItemSelected: false,
+                    listContainerHeight: MediaQuery.of(context).size.height / 2,
+                    queryBuilder: (query, eventss) {
+                      return eventss
+                          .where((eventss) => eventss.name
+                              .toLowerCase()
+                              .contains(query.toLowerCase()))
+                          .toList();
+                    },
+                    popupListItemBuilder: (eventss) {
+                      return PopupListItemWidget(eventss);
+                    },
+                    selectedItemBuilder: (selectedItem, deleteSelectedItem) {
+                      //return SelectedItemWidget(selectedItem, deleteSelectedItem);
+                    },
+                    // widget customization
+                    //noItemsFoundWidget: NoItemsFound(),
+                    textFieldBuilder: (controller, focusNode) {
+                      return MyTextField(controller, focusNode);
+                    },
+                    onItemSelected: (item) {
+                      setState(
+                        () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return new EventDetails(rootEvent: item);
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                    ),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  hintText: "Search..",
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.black,
-                  ),
-                  suffixIcon: Icon(
-                    Icons.filter_list,
-                    color: Colors.black,
-                  ),
-                  hintStyle: TextStyle(
-                    fontSize: 15.0,
-                    color: Colors.black,
-                  ),
-                ),
-                maxLines: 1,
-                controller: _searchControl,
+                ],
               ),
             ),
           ),
         ),
         preferredSize: Size(
           MediaQuery.of(context).size.width,
-          60.0,
+          62.0,
         ),
       ),
 
       body: Padding(
-        padding: EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+        padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
         child: ListView.builder(
             primary: false,
             scrollDirection: Axis.vertical,
@@ -127,7 +231,7 @@ class _NewDiscoverState extends State<NewDiscover>
                     Text(
                       categ[indexOfCategories].name,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).primaryColorDark,
                         fontSize: 23,
                         fontWeight: FontWeight.w800,
                       ),
@@ -138,67 +242,145 @@ class _NewDiscoverState extends State<NewDiscover>
 
                 //Horizontal List here
                 Container(
-                  height: MediaQuery.of(context).size.height / 5,
-                  child: ListView.builder(
-                    primary: false,
+                  decoration: BoxDecoration(
+                    //color: Colors.white,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5.0),
+                    ),
+                  ),
+                  height: MediaQuery.of(context).size.height * 0.45,
+                  child: PageView.builder(
+                    //primary: false,
                     scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
+                    //shrinkWrap: true,
                     itemCount: categ[indexOfCategories].events == null
                         ? 0
                         : categ[indexOfCategories].events.length,
                     itemBuilder: (BuildContext context, int indexOfEvents) {
                       return Padding(
-                        padding: EdgeInsets.only(right: 5.0),
+                        padding: EdgeInsets.only(right: 2.0),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-
+                          borderRadius: BorderRadius.circular(15.0),
                           child: Stack(
                             children: <Widget>[
-                              Image.network(
-                                categ[indexOfCategories]
-                                    .events[indexOfEvents]
-                                    .image,
-                                height: MediaQuery.of(context).size.height / 4,
-                                width: MediaQuery.of(context).size.height / 4,
-                                fit: BoxFit.fill,
-                              ),
-                              Container(
-                                height: MediaQuery.of(context).size.height / 2,
-                                width: MediaQuery.of(context).size.width / 2,
-                                child: new InkWell(
+                              InkWell(
                                   onTap: () => {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) {
-                                          for (int i = 0;
-                                              i < eventss.length;
-                                              i++) {
-                                            if (eventss[i].id ==
-                                                categ[indexOfCategories]
-                                                    .events[indexOfEvents]
-                                                    .id) {
-                                              x = eventss[i];
-                                            }
-                                          }
-                                          return new EventDetails(rootEvent: x);
-                                        },
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (BuildContext context) {
+                                              for (int i = 0;
+                                                  i < eventss.length;
+                                                  i++) {
+                                                if (eventss[i].id ==
+                                                    categ[indexOfCategories]
+                                                        .events[indexOfEvents]
+                                                        .id) {
+                                                  x = eventss[i];
+                                                }
+                                              }
+                                              return new EventDetails(
+                                                  rootEvent: x);
+                                            },
+                                          ),
+                                        )
+                                      },
+                                  child: SlidingCard(
+                                    assetName: categ[indexOfCategories]
+                                        .events[indexOfEvents]
+                                        .image,
+                                    date: DateFormat.yMMMMd("en_US").format(
+                                        DateTime.parse(categ[indexOfCategories]
+                                            .events[indexOfEvents]
+                                            .start_date)),
+                                    name: categ[indexOfCategories]
+                                        .events[indexOfEvents]
+                                        .name,
+                                  )
+                                  /*Card(
+                                  semanticContainer: true,
+                                 clipBehavior: Clip.antiAliasWithSaveLayer,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:BorderRadius.all(
+                                    Radius.circular(20)
+                                  ) ),
+                                  elevation: 15.0,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(5.0),
                                       ),
-                                    )
-                                  },
-                                ),
-                              ),
-                              Center(
-                                child: Container(
-                                  height:
-                                      MediaQuery.of(context).size.height / 6,
-                                  width: MediaQuery.of(context).size.height / 6,
-                                  padding: EdgeInsets.all(1),
-                                  constraints: BoxConstraints(
-                                    minWidth: 20,
-                                    minHeight: 20,
+                                    ),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Image.network(
+                                          categ[indexOfCategories]
+                                              .events[indexOfEvents]
+                                              .image,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              4,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              4,
+                                          fit: BoxFit.fill,
+                                        ),
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .height,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              10000,
+                                          child: new InkWell(
+                                            onTap: () => {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    for (int i = 0;
+                                                        i < eventss.length;
+                                                        i++) {
+                                                      if (eventss[i].id ==
+                                                          categ[indexOfCategories]
+                                                              .events[
+                                                                  indexOfEvents]
+                                                              .id) {
+                                                        x = eventss[i];
+                                                      }
+                                                    }
+                                                    return new EventDetails(
+                                                        rootEvent: x);
+                                                  },
+                                                ),
+                                              )
+                                            },
+                                          ),
+                                        ),
+                                        Center(
+                                          child: Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                6,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                3000,
+                                            padding: EdgeInsets.all(1),
+                                            constraints: BoxConstraints(
+                                              minWidth: 0,
+                                              minHeight: 20,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )),*/
                                   ),
-                                ),
-                              ),
                             ],
                           ),
                         ),
@@ -206,15 +388,13 @@ class _NewDiscoverState extends State<NewDiscover>
                     },
                   ),
                 ),
-                SizedBox(height: 5.0),
-                new Divider(
+                SizedBox(height: 20.0),
+/*                 new Divider(
                   thickness: 1,
                   color: Colors.white,
                   indent: 20,
                   endIndent: 20,
-                ),
-
-                
+                ), */
               ]);
             }),
       ),

@@ -8,7 +8,7 @@ class HistoryShowcase extends StatelessWidget {
     return new Center(
       child: new Text(
         'HISTORY LIST',
-        style: textTheme.title.copyWith(color: Colors.white),
+        style: textTheme.title.copyWith(color: Theme.of(context).primaryColorDark),
       ),
     );
   }

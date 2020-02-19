@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:senior_project/Pages/Reviews/ReviewView.dart';
-import 'package:senior_project/Pages/comment.dart';
-import 'package:senior_project/Pages/user_instance.dart';
-import 'package:senior_project/Pages/API.dart';
-import 'package:smooth_star_rating/smooth_star_rating.dart';
+import 'package:EventPulse/Pages/comment.dart';
+import 'package:EventPulse/Pages/user_instance.dart';
+import 'package:EventPulse/Pages/API.dart';
 
 class CommentList extends StatefulWidget {
   final List<Comment> comments;
@@ -19,6 +17,58 @@ class _MyListScreenState extends State<CommentList> {
   String textfiel;
   int userId = UserInstance().id;
   get rating => 4.0;
+  Widget _buildChild(context, widget) {
+    return Row(
+        children: <Widget>[
+          IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text('Type a comment'),
+                    content: TextField(
+                      controller: _textFieldController,
+                    ),
+                    actions: <Widget>[
+                      new FlatButton(
+                        child: Text('post'),
+                        onPressed: () {
+                          textfiel = _textFieldController.text;
+                          print(_textFieldController.text.toString());
+                          API.postComment(context, userId, textfiel);
+                          print(UserInstance().id);
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  );
+                });
+          },
+        ),
+        Text(
+          'create   ',
+          style: TextStyle(
+            color: Colors.black,
+            //height: 3,
+          ),
+        )]);
+    //Text('Comments   ', style: TextStyle(color: Colors.black, height: 3, ),),
+  }
+
+  Widget _buildNilChild(context, widget) {
+    return Text("nil");
+    //Text('Comments   ', style: TextStyle(color: Colors.black, height: 3, ),),
+  }
+
+  _setW(context, widget) {
+    if (UserInstance().name == null) {
+      return _buildNilChild(context, widget);
+    } else {
+      return _buildChild(context, widget);
+    }
+  }
 
   _getComments() {
     print(widget.comments[0]);
@@ -70,42 +120,7 @@ class _MyListScreenState extends State<CommentList> {
         ),
         centerTitle: true,
         iconTheme: new IconThemeData(color: Colors.black),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text('Type a comment'),
-                      content: TextField(
-                        controller: _textFieldController,
-                      ),
-                      actions: <Widget>[
-                        new FlatButton(
-                          child: Text('post'),
-                          onPressed: () {
-                            textfiel = _textFieldController.text;
-                            print(_textFieldController.text.toString());
-                            API.postComment(context, userId, textfiel);
-                            print(UserInstance().id);
-                            Navigator.of(context).pop();
-                          },
-                        )
-                      ],
-                    );
-                  });
-            },
-          ),
-          Text(
-            'create   ',
-            style: TextStyle(
-              color: Colors.black,
-              height: 3,
-            ),
-          ),
-        ],
+        actions: <Widget>[_setW(context, widget)],
       ),
       body: ListView.builder(
         itemCount: widget.comments.length,
@@ -136,24 +151,6 @@ class _MyListScreenState extends State<CommentList> {
                     ),
 
                     // subtitle: ,
-                  ),
-                  ButtonTheme.bar(
-                    child: ButtonBar(
-                      children: <Widget>[
-                        SmoothStarRating(
-                            allowHalfRating: true,
-                            onRatingChanged: (v) {
-                              var rating = v;
-                              setState(() {});
-                            },
-                            starCount: 5,
-                            rating: rating,
-                            size: 20.0,
-                            color: Colors.deepPurple,
-                            borderColor: Colors.deepPurple,
-                            spacing: 0.0)
-                      ],
-                    ),
                   ),
                 ],
               ),

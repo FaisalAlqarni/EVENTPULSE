@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:EventPulse/Pages/user_instance.dart';
+import 'package:EventPulse/Pages/user_others.dart';
 
-class UserDetailBody extends StatelessWidget {
-  
-  UserInstance user = UserInstance();
+class UserDetailBodyOthers extends StatelessWidget {
+    final UserOthers rootUser;
+  const UserDetailBodyOthers({Key key, this.rootUser}) : super(key: key);
 
   Widget _buildLocationInfo(TextTheme textTheme, BuildContext context) {
     return new Row(
@@ -16,7 +16,7 @@ class UserDetailBody extends StatelessWidget {
         new Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: new Text(
-            user.email,
+            rootUser.email ?? 'loading!',
             style: textTheme.subhead.copyWith(color: Theme.of(context).primaryColorDark),
           ),
         ),
@@ -48,7 +48,7 @@ class UserDetailBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         new Text(
-          user.name,
+          rootUser.name ?? 'loading!',
           style: textTheme.headline.copyWith(color: Theme.of(context).primaryColorDark),
         ),
         new Padding(

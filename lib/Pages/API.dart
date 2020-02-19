@@ -1,14 +1,26 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:senior_project/Pages/Reviews/review.dart';
-import 'package:senior_project/Pages/comment.dart';
-import 'package:senior_project/Pages/event.dart';
-import 'package:senior_project/Pages/user_instance.dart';
+import 'package:EventPulse/Pages/Reviews/review.dart';
+import 'package:EventPulse/Pages/comment.dart';
+import 'package:EventPulse/Pages/event.dart';
+import 'package:EventPulse/Pages/user_instance.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class API {
+  static Future<Map<String, dynamic>> getCurrentUser(String token) async {
+    var url = "http://event-discoverer-backend.herokuapp.com/api/users/current";
+     final response = await http.get(url, headers: {'X-Auth-Token': token} );
+
+  if (response.statusCode == 200) {
+    print('RETURNING: ' + response.body);
+    return json.decode(response.body); // <------ CHANGED THIS LINE
+  } else {
+    throw Exception('Failed to load post');
+  }
+    //return http.get(url);
+  }
   static Future getEvent() {
     var url = "http://event-discoverer-backend.herokuapp.com/api/events";
     return http.get(url);
@@ -35,10 +47,18 @@ class API {
     return http.get(url);
   }
 
-  static Future getUser(String user) {
-    var url = 'http://event-discoverer-backend.herokuapp.com/api/users/' +
-        user.toString();
-    return http.get(url);
+  static Future<Map<String, dynamic>> getUser(int user_id) async {
+    String x = user_id.toString();
+    var url = 'http://event-discoverer-backend.herokuapp.com/api/users/$x';
+    final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    print('RETURNING: ' + response.body);
+    return json.decode(response.body); // <------ CHANGED THIS LINE
+  } else {
+    throw Exception('Failed to load post');
+  }
+    //return http.get(url);
   }
 
   static Future<UserInstance> requestLogin(
@@ -58,7 +78,7 @@ class API {
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
       UserInstance.fromJson(responseJson);
-
+      UserInstance().persistUser();
       return UserInstance.fromJson(responseJson);
     } else {
       return null;
@@ -83,7 +103,7 @@ class API {
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
       UserInstance.fromJson(responseJson);
-
+      UserInstance().persistUser();
       return UserInstance.fromJson(responseJson);
     } else {
       return null;
@@ -114,6 +134,8 @@ class API {
       UserInstance().name = name;
       print('After editing=====================');
       print(UserInstance().email + ' - ' + UserInstance().name);
+      UserInstance.fromJson(responseJson);
+      UserInstance().persistUser();
       return UserInstance.fromJson(responseJson);
     } else {
       print(UserInstance().email + ' - ' + UserInstance().name);
@@ -126,22 +148,21 @@ class API {
     final url = "http://event-discoverer-backend.herokuapp.com/api/comments";
 
     Map<String, dynamic> body = {
-      'body': commentBody,
-      'user_id': user_id,
+      'body': commentBody.toString(),
+      'user_id': user_id.toString(),
       'commentable_type': 'App\\Review'
     };
 
     final response = await http.post(
       url,
-      body: json.encode(body),
+      body: body,
     );
     print('//DDSSSSSDSDDD//////');
     print(response);
     print(response.statusCode);
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
-      print('////////////////////');
-      print(commentBody + ' - ' + user_id.toString());
+
       return Comment.fromJson(responseJson);
     } else {
       print('errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrror');
@@ -171,33 +192,101 @@ class API {
     }
   }
 
-  static Future<Review> postReview(BuildContext context, String title,
-      String meat, double rating, File image) async {
+  static Future<int> postReview(BuildContext context, String title, String meat,
+      double rating, int eid, int uid) async {
     final url = "http://event-discoverer-backend.herokuapp.com/api/reviews";
 
     Map<String, dynamic> body = {
-      'title': title,
-      'meat': meat,
-      'rating': rating,
-      'image': image
+      'title': title.toString(),
+      'meat': meat.toString(),
+      'rating': rating.toString(),
+      'event_id': eid.toString(),
+      'user_id': uid.toString()
     };
-
-    print("_____-------_____________----------_____!@!@!@#@!");
-    print(body);
-    print(url);
 
     final response = await http.post(
       url,
-      body: json.encode(body),
+      body: body,
     );
-
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       final responseJson = json.decode(response.body);
-      print("xx_____xx_____");
-      print(responseJson);
-      return Review.fromJson(responseJson);
+
+      return 201;
     } else {
       return null;
     }
   }
+
+  static Future<Event> postInterest(
+      BuildContext context, int event_id, int user_id) async {
+    final url =
+        "http://event-discoverer-backend.herokuapp.com/api/event_interests";
+
+    Map<String, dynamic> body = {
+      'user_id': user_id.toString(),
+      'event_id': event_id.toString()
+    };
+
+    final response = await http.post(
+      url,
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+    } else {
+      return null;
+    }
+  }
+
+  static Future isIntrested(int event_id, int user_id) {
+    var url =
+        "http://event-discoverer-backend.herokuapp.com/api/event_interests/event?user_id=$user_id&event_id=$event_id";
+
+    return http.get(url);
+  }
+
+  static Future isBookmarked(int event_id, int user_id) {
+    var url =
+        "http://event-discoverer-backend.herokuapp.com/api/event_interests/event?user_id=$user_id&event_id=$event_id";
+
+    return http.get(url);
+  }
+
+static editComment(int comment_id, String comment) async {
+    // set up PUT request arguments
+    String url =  "http://event-discoverer-backend.herokuapp.com/api/comments/$comment_id";
+    //Map<String, String> headers = {"Content-type": "application/x-www-form-urlencoded"};
+    
+    Map<String, dynamic> body = {
+      'body': comment,
+    };
+
+    final response = await http.put(
+      url,
+      body: body,
+    );
+}
+
+  static follow(BuildContext context, int following_id, int user_id) async {
+    final url ="http://event-discoverer-backend.herokuapp.com/api/users/follow";
+
+    Map<String, dynamic> body = {
+      'user_id': user_id.toString(),
+      'following_id': following_id.toString()
+    };
+  Map<String, String> header = {'Content-Type': "application/x-www-form-urlencoded"};
+    final response = await http.post(
+      url,
+      body: body,
+      headers: header
+    );
+
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+    } else {
+      return null;
+    }
+  }
+  
 }

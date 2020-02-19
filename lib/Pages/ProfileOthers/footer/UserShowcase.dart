@@ -1,18 +1,19 @@
+import 'package:EventPulse/Pages/user_others.dart';
 import 'package:flutter/material.dart';
-import 'package:EventPulse/Pages/Profile/footer/HistoryShowcase.dart';
-import 'package:EventPulse/Pages/Profile/footer/REVIEWSShowcase.dart';
+import 'package:EventPulse/Pages/ProfileOthers/footer/HistoryShowcase.dart';
+import 'package:EventPulse/Pages/ProfileOthers/footer/REVIEWSShowcase.dart';
 
-import '../../user_instance.dart';
 
-class UserShowcase extends StatefulWidget {
+class UserShowcaseOthers extends StatefulWidget {
 
-  UserInstance user = UserInstance();
+    final UserOthers rootUser;
+    const UserShowcaseOthers({Key key, this.rootUser}) : super(key: key);
 
   @override
-  _UserShowcaseState createState() => new _UserShowcaseState();
+  _UserShowcaseStateOthers createState() => new _UserShowcaseStateOthers();
 }
 
-class _UserShowcaseState extends State<UserShowcase>
+class _UserShowcaseStateOthers extends State<UserShowcaseOthers>
     with TickerProviderStateMixin {
   List<Tab> _tabs;
   List<Widget> _pages;
@@ -26,8 +27,8 @@ class _UserShowcaseState extends State<UserShowcase>
       new Tab(text: 'Reviews'.toUpperCase()),
     ];
     _pages = [
-      new HistoryShowcase(),
-      new REVIEWSShowcase(),
+      new HistoryShowcaseOthers(),
+      new REVIEWSShowcaseOthers(),
     ];
     _controller = new TabController(
       length: _tabs.length,

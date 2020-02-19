@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:senior_project/Pages/Discover/discoverpage.dart';
-import 'package:senior_project/Pages/Navigation/navigation_controler.dart';
-import 'package:senior_project/Pages/Profile/footer/UserShowcase.dart';
-import 'package:senior_project/Pages/Profile/header/friend_detail_header.dart';
-import 'package:senior_project/Pages/Profile/user_detail_body.dart';
-import 'package:senior_project/Pages/user_instance.dart';
-import 'package:senior_project/pages/Profile/edit/EditProfie.dart';
-import '../../navigation_bar.dart';
+import 'package:EventPulse/Pages/Navigation/navigation_controler.dart';
+import 'package:EventPulse/Pages/Profile/footer/UserShowcase.dart';
+import 'package:EventPulse/Pages/Profile/header/friend_detail_header.dart';
+import 'package:EventPulse/Pages/Profile/user_detail_body.dart';
+import 'package:EventPulse/Pages/user_instance.dart';
+import 'package:EventPulse/pages/Profile/edit/EditProfie.dart';
 
 class ProfilePage extends StatefulWidget {
     const ProfilePage({Key key}) : super(key: key);
@@ -46,21 +44,22 @@ class _ProfileState extends State<ProfilePage> {
         begin: FractionalOffset.centerRight,
         end: FractionalOffset.bottomLeft,
         colors: <Color>[
-          const Color(0xFF673ab7),
-          const Color(0xFF673ab7),
+          const Color(0xFFf0f4f8),
+          const Color(0xFFf0f4f8),
         ],
       ),
     );
 
     return new Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        leading: new Container(),
+        backgroundColor: Theme.of(context).primaryColorDark,
         title: Text(
           "Profile",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color:Theme.of(context).primaryColor),
         ),
         centerTitle: true,
-        iconTheme: new IconThemeData(color: Colors.black),
+        iconTheme: new IconThemeData(color: Theme.of(context).primaryColor),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.settings),

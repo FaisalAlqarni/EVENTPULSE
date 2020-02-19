@@ -9,6 +9,9 @@ class Event{
   String image;
   String longitude;
   String latitude;
+  String guest_url;
+  String volunteer_url;
+  int interest_count;
 
   Event(
     this.id,
@@ -29,7 +32,10 @@ class Event{
         end_date = json['end_date'],
         image = json['image'],
         longitude = json['longitude'],
-        latitude = json['latitude'];
+        latitude = json['latitude'],
+        guest_url = json['guest_url'],
+        volunteer_url = json['volunteer_url'],
+        interest_count = json['interest_count'];
 
   Map<String, dynamic> toJson() =>
       {

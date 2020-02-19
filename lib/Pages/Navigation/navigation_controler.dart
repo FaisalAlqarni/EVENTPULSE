@@ -1,10 +1,12 @@
+import 'package:EventPulse/Pages/Discover/discoverpage.old.dart';
 import 'package:flutter/material.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:senior_project/Pages/MainLogin.dart';
+import 'package:EventPulse/Pages/MainLogin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../BeforeLogin/Map.dart';
 import '../BeforeLogin/timeline.dart';
 import '../Discover/discoverpage.dart';
 import '../Profile/user_details_page.dart';
+import '../event_coordinator.dart';
 import '../user_instance.dart';
 
 class NavigationBarController extends StatefulWidget {
@@ -13,11 +15,21 @@ class NavigationBarController extends StatefulWidget {
       _NavigationBarControllerState();
 }
 
+const String spKey = 'myBool';
+
 class _NavigationBarControllerState extends State<NavigationBarController> {
   List<Widget> pages;
   final PageStorageBucket bucket = PageStorageBucket();
+  SharedPreferences sharedPreferences;
+  bool _testValue;
+  EventCoordinator coordinator = new EventCoordinator();
 
   int _selectedIndex = 1;
+
+  prepareUser() async {
+    await UserInstance().assignUserFromDefaults();
+    this.pages = setpages();
+  }
 
   List<Widget> setpages() {
     if (UserInstance().token == null) {
@@ -28,7 +40,7 @@ class _NavigationBarControllerState extends State<NavigationBarController> {
         NewDiscover(
           key: PageStorageKey('DiscoverPage'),
         ),
-        MapPage(
+        DiscoverPageNew(
           key: PageStorageKey('MapPage'),
         ),
         MainLogin(
@@ -44,7 +56,7 @@ class _NavigationBarControllerState extends State<NavigationBarController> {
         NewDiscover(
           key: PageStorageKey('DiscoverPage'),
         ),
-        MapPage(
+        DiscoverPageNew(
           key: PageStorageKey('MapPage'),
         ),
         ProfilePage(
@@ -55,25 +67,41 @@ class _NavigationBarControllerState extends State<NavigationBarController> {
     }
   }
 
-  initState(){
-     this.pages = setpages();
+  initState() {
+    prepareUser();
+    SharedPreferences.getInstance().then((SharedPreferences sp) {
+      sharedPreferences = sp;
+      _testValue = sharedPreferences.getBool(spKey);
+      // will be null if never previously saved
+      if (_testValue == null) {
+        _testValue = false;
+        //persist(_testValue); // set an initial value
+      }
+      setState(() {});
+    });
+    this.pages = setpages();
   }
+
+  // void persist(bool value) {
+  //   setState(() {
+  //     _testValue = value;
+  //   });
+  //   sharedPreferences?.setBool(spKey, value);
+  // }
 
   Widget _bottomNavigationBar(int selectedIndex) => BottomNavigationBar(
         onTap: (int index) => setState(() => _selectedIndex = index),
         currentIndex: selectedIndex,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(Icons.timeline), title: Text('Timeline')),
+              icon: Icon(Icons.timeline), title: Text('Timeline'), backgroundColor: Color(0xff486581)),
           BottomNavigationBarItem(
-              icon: Icon(Icons.search), title: Text('Discover')),
-          BottomNavigationBarItem(icon: Icon(Icons.map), title: Text('Map')),
+              icon: Icon(Icons.search), title: Text('Discover'), backgroundColor: Color(0xff486581)),
+          BottomNavigationBarItem(icon: Icon(Icons.map), title: Text('Map'), backgroundColor: Color(0xff486581)),
           BottomNavigationBarItem(
-              icon: Icon(Icons.face), title: Text('Profile')),
+              icon: Icon(Icons.face), title: Text('Profile'), backgroundColor: Color(0xff486581)),
         ],
-        backgroundColor: Colors.white,
-      );
-
+        backgroundColor: Color(0xff486581)      );
   @override
   Widget build(BuildContext context) {
     return Scaffold(

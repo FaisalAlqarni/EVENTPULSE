@@ -1,4 +1,4 @@
-import 'package:senior_project/pages/event.dart';
+import 'package:EventPulse/pages/event.dart';
 
 class Categoory {
   int id;

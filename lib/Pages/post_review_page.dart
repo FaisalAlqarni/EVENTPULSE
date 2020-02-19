@@ -1,14 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-//import 'package:image_picker_modern/image_picker_modern.dart';
+import 'package:EventPulse/Pages/user_instance.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
-import '../navigation_bar.dart';
-import '../topBar.dart';
 import 'API.dart';
-import 'Discover/discoverpage.dart';
+import 'Navigation/navigation_controler.dart';
 
 // Create a Form widget.
 class PostReviewPage extends StatefulWidget {
+  final int rootEventid;
+
+  const PostReviewPage({Key key, this.rootEventid}) : super(key: key);
+
   @override
   ReviewFormState createState() {
     return ReviewFormState();
@@ -31,12 +33,13 @@ class ReviewFormState extends State<PostReviewPage> {
 
   Widget review_title() {
     return Container(
-        padding: EdgeInsets.only(left: 8, top: 8, bottom: 8),
+        padding: EdgeInsets.only(left: 1, top: 8, bottom: 8),
         child: Column(
           children: <Widget>[
             Text(
-              'Review title',
-              style: TextStyle(color: Colors.deepPurple),
+              '\n\nReview title',
+              style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: 20, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.end,
             ),
             TextFormField(
               controller: _title,
@@ -57,10 +60,11 @@ class ReviewFormState extends State<PostReviewPage> {
         child: Column(
           children: <Widget>[
             Text(
-              'Review',
-              style: TextStyle(color: Colors.deepPurple),
+              '\nReview',
+              style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: 20, fontWeight: FontWeight.bold),
             ),
             TextFormField(
+              style: TextStyle(fontSize: 18, color: Theme.of(context).primaryColorDark),
               controller: _meat,
                 validator: (value) {
                   if (value.isEmpty) {
@@ -81,7 +85,7 @@ class ReviewFormState extends State<PostReviewPage> {
           children: <Widget>[
             Text(
               'Pictures',
-              style: TextStyle(color: Colors.deepPurple),
+              style: TextStyle(color: Theme.of(context).primaryColorDark),
             ),
             Center(
               child: _image == null
@@ -93,7 +97,7 @@ class ReviewFormState extends State<PostReviewPage> {
                 onPressed: getImage,
                 tooltip: 'Pick Image',
                 child: Icon(Icons.add_a_photo),
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: Theme.of(context).primaryColorDark,
               ),
               padding: EdgeInsets.only(top: 4),
             ),
@@ -115,8 +119,8 @@ class ReviewFormState extends State<PostReviewPage> {
         child: Column(
           children: <Widget>[
             Text(
-              'Rate',
-              style: TextStyle(color: Colors.deepPurple),
+              '\n\n Rate',
+              style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SmoothStarRating(
                 allowHalfRating: true,
@@ -127,8 +131,8 @@ class ReviewFormState extends State<PostReviewPage> {
                 starCount: 5,
                 rating: _rating,
                 size: 40.0,
-                color: Colors.yellowAccent,
-                borderColor: Colors.yellow,
+                color: Theme.of(context).primaryColorDark,
+                borderColor: Theme.of(context).primaryColorDark,
                 spacing: 0.0),
           ],
         ));
@@ -139,13 +143,13 @@ class ReviewFormState extends State<PostReviewPage> {
       var title = _title.text;
       var meat = _meat.text;
 
-      var review = await API.postReview(context, title, meat, _rating, _image);
+      var review = await API.postReview(context, title, meat, _rating, widget.rootEventid,UserInstance().id);
 
       if (review == null) {
         _showDialog(new Text("no go :("), new Text("Something went wrong!"));
       } else {
         Navigator.of(context).push(
-            MaterialPageRoute(builder: (BuildContext context) => NewDiscover()));
+            MaterialPageRoute(builder: (BuildContext context) => NavigationBarController()));
       }
     }
 
@@ -176,10 +180,11 @@ class ReviewFormState extends State<PostReviewPage> {
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: TopBar(
-          pageTitle: "Review page",
-          height: 60,
+        backgroundColor: Theme.of(context).primaryColor,
+        appBar: AppBar(
+          title: Text("             Review page", textAlign: TextAlign.center),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -187,10 +192,11 @@ class ReviewFormState extends State<PostReviewPage> {
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   review_title(),
                   review_meat(),
-                  review_pictures(),
+                  //review_pictures(),
                   review_rating(),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -210,7 +216,7 @@ class ReviewFormState extends State<PostReviewPage> {
                         style: TextStyle(
                             fontWeight: FontWeight.normal, color: Colors.white),
                       ),
-                      color: Colors.deepPurple,
+                      color: Theme.of(context).primaryColorDark,
                     ),
                   ),
                 ],
@@ -218,8 +224,6 @@ class ReviewFormState extends State<PostReviewPage> {
             ),
           ),
         ),
-        bottomNavigationBar: NavigationBar(
-          currindx: 1,
-        ));
+        );
   }
 }
