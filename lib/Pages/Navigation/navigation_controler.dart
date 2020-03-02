@@ -1,8 +1,8 @@
-import 'package:EventPulse/Pages/Discover/discoverpage.old.dart';
 import 'package:flutter/material.dart';
 import 'package:EventPulse/Pages/MainLogin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../BeforeLogin/Map.dart';
+import '../Map/MapView.dart';
 import '../BeforeLogin/timeline.dart';
 import '../Discover/discoverpage.dart';
 import '../Profile/user_details_page.dart';
@@ -40,7 +40,7 @@ class _NavigationBarControllerState extends State<NavigationBarController> {
         NewDiscover(
           key: PageStorageKey('DiscoverPage'),
         ),
-        DiscoverPageNew(
+        MapView(
           key: PageStorageKey('MapPage'),
         ),
         MainLogin(
@@ -56,7 +56,7 @@ class _NavigationBarControllerState extends State<NavigationBarController> {
         NewDiscover(
           key: PageStorageKey('DiscoverPage'),
         ),
-        DiscoverPageNew(
+        MapView(
           key: PageStorageKey('MapPage'),
         ),
         ProfilePage(

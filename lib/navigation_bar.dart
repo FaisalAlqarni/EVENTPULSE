@@ -1,7 +1,10 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:senior_project/Pages/MainLogin.dart';
-import 'package:senior_project/Pages/Reviews/ReviewList.dart';
+import 'Pages/MainLogin.dart';
+import 'Pages/Map/MapView.dart';
+import 'Pages/Reviews/ReviewList.dart';
 import 'Pages/BeforeLogin/timeline.dart';
 import 'Pages/Discover/discoverpage.dart';
 import 'Pages/Profile/user_details_page.dart';
@@ -67,7 +70,7 @@ class _NavBarState extends State<NavigationBar> {
               Navigator.of(context).push(
                   new MaterialPageRoute(
                     builder: (c) {
-                      return new ReviewList();
+                      return new MapView();
                     },
                   ),
                 );

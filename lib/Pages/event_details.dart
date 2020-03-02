@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:EventPulse/Pages/Users_List_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:EventPulse/Pages/Reviews/ReviewList.dart';
 import 'package:EventPulse/Pages/event.dart';
@@ -115,15 +116,13 @@ class _HomeState extends State<EventDetails> {
       onPressed: () {
         setState(() {
           if (_bookmarkPressed) {
-            API.postInterest(context, widget.rootEvent.id, UserInstance().id);
+            API.postBookmark(context, widget.rootEvent.id, UserInstance().id);
             _bookmarkIcon = Icon(Icons.bookmark_border);
             _bookmarkPressed = false;
-            widget.rootEvent.interest_count -= 1;
           } else {
             _bookmarkIcon = Icon(Icons.bookmark);
             _bookmarkPressed = true;
-            API.postInterest(context, widget.rootEvent.id, UserInstance().id);
-            widget.rootEvent.interest_count += 1;
+            API.postBookmark(context, widget.rootEvent.id, UserInstance().id);
             //remove interest here
           }
         });
@@ -269,7 +268,7 @@ class _HomeState extends State<EventDetails> {
                                           size: 13.0,
                                           color: Colors.grey,
                                         )),
-                                        TextSpan(text: "Riyadh Boulevard")
+                                        TextSpan(text: "Riyadh")
                                       ]),
                                       style: TextStyle(
                                           color: Theme.of(context)
@@ -294,23 +293,23 @@ class _HomeState extends State<EventDetails> {
                                         children: <Widget>[
                                           InkWell(
                                             child: Text(
-                                              "${widget.rootEvent.interest_count} likes",
+                                              "${widget.rootEvent.interest_count} Interests",
                                               style: TextStyle(
                                                   color: Theme.of(context)
                                                       .primaryColorDark,
                                                   fontSize: 16.0),
                                             ),
                                             onTap: () {
-                                              // Navigator.of(context).push(
-                                              //   new MaterialPageRoute(
-                                              //     builder: (c) {
-                                              //       return new ReviewList(
-                                              //         event_id: widget.rootEvent.id,
-                                              //       );
-                                              //     },
-                                              //   ),
-                                              // );
-                                              null;
+                                              Navigator.of(context).push(
+                                                new MaterialPageRoute(
+                                                  builder: (c) {
+                                                    return new Users_List(
+                                                      title: "whos interested",
+                                                    );
+                                                  },
+                                                ),
+                                              );
+                                              //null;
                                             },
                                           ),
                                           _setLikeButton(context, widget),

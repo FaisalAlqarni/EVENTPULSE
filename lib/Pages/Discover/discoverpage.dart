@@ -28,7 +28,7 @@ class PopupListItemWidget extends StatelessWidget {
       child: Row(
         children: <Widget>[
           CircleAvatar(
-            backgroundImage: new NetworkImage(eventss.image),
+            backgroundImage: new NetworkImage(eventss.image) ?? null,
           ),
           Text(
             '  ' + eventss.name,

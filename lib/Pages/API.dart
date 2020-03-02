@@ -239,6 +239,28 @@ class API {
     }
   }
 
+    static Future<Event> postBookmark(
+      BuildContext context, int event_id, int user_id) async {
+    final url =
+        "http://event-discoverer-backend.herokuapp.com/api/event_bookmarks";
+
+    Map<String, dynamic> body = {
+      'user_id': user_id.toString(),
+      'event_id': event_id.toString()
+    };
+
+    final response = await http.post(
+      url,
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+    } else {
+      return null;
+    }
+  }
+
   static Future isIntrested(int event_id, int user_id) {
     var url =
         "http://event-discoverer-backend.herokuapp.com/api/event_interests/event?user_id=$user_id&event_id=$event_id";
@@ -248,7 +270,7 @@ class API {
 
   static Future isBookmarked(int event_id, int user_id) {
     var url =
-        "http://event-discoverer-backend.herokuapp.com/api/event_interests/event?user_id=$user_id&event_id=$event_id";
+        "http://event-discoverer-backend.herokuapp.com/api/event_bookmarks/event?user_id=$user_id&event_id=$event_id";
 
     return http.get(url);
   }
