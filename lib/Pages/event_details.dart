@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:EventPulse/Pages/Reviews/ReviewView.dart';
 import 'package:EventPulse/Pages/Users_List_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:EventPulse/Pages/Reviews/ReviewList.dart';
@@ -32,6 +33,7 @@ class _HomeState extends State<EventDetails> {
   Icon _favIcon = Icon(Icons.favorite_border);
   bool _bookmarkPressed = false;
   Icon _bookmarkIcon = Icon(Icons.bookmark_border);
+  Icon _infoIcon = Icon(Icons.info_outline);
 
   _setFavIcon() async {
     await API
@@ -108,6 +110,28 @@ class _HomeState extends State<EventDetails> {
     );
   }
 
+  Widget whosIntrestedButton(context, widget , int userID , int eventID) {
+    return IconButton(
+      iconSize: 20,
+      color: Theme.of(context).primaryColorDark,
+      icon: _infoIcon,
+      onPressed: () {
+        Navigator.of(context).push(
+          new MaterialPageRoute(
+            builder: (c) {
+              return new Users_List(
+                title: "whos interested",
+                userid: userID,
+                eventid: eventID,
+              );
+            },
+          ),
+        );
+        //null;
+      },
+    );
+  }
+
   Widget bookmarkButton(context, widget) {
     return IconButton(
       iconSize: 20,
@@ -150,11 +174,22 @@ class _HomeState extends State<EventDetails> {
     }
   }
 
+
+    _setWhosInterestedButton(context, widget  , int userID , int eventID) {
+    if (UserInstance().token == null) {
+      return nilChild();
+    } else {
+      return whosIntrestedButton(context, widget  ,userID ,  eventID);
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     if (UserInstance().token != null) {
+      print(
+          '///////////////////////////////////////////////////88888888888888888888');
       _setFavIcon();
       _setBookmarkIcon();
     } else {
@@ -290,6 +325,7 @@ class _HomeState extends State<EventDetails> {
                                           borderRadius:
                                               BorderRadius.circular(20.0)),
                                       child: Row(
+                                        //crossAxisAlignment: CrossAxisAlignment.start,
                                         children: <Widget>[
                                           InkWell(
                                             child: Text(
@@ -300,20 +336,23 @@ class _HomeState extends State<EventDetails> {
                                                   fontSize: 16.0),
                                             ),
                                             onTap: () {
-                                              Navigator.of(context).push(
-                                                new MaterialPageRoute(
-                                                  builder: (c) {
-                                                    return new Users_List(
-                                                      title: "whos interested",
-                                                    );
-                                                  },
-                                                ),
-                                              );
+                                              // Navigator.of(context).push(
+                                              //   new MaterialPageRoute(
+                                              //     builder: (c) {
+                                              //       return new Users_List(
+                                              //         title: "whos interested",
+                                              //         userid: 1,
+                                              //         eventid: 1,
+                                              //       );
+                                              //     },
+                                              //   ),
+                                              // );
                                               //null;
                                             },
                                           ),
                                           _setLikeButton(context, widget),
-                                          _setBookmarkButton(context, widget)
+                                          _setBookmarkButton(context, widget),
+                                          _setWhosInterestedButton(context, widget , UserInstance().id , widget.rootEvent.id)
                                         ],
                                       ))),
                             ],
