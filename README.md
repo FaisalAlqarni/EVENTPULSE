@@ -1,9 +1,13 @@
-# senior_project
+# EVENTPULSE
+Graduation project; Senior Project
+an application to display event to users and enable them to socialize with each other.
 
-Graduation project
-EventPulse
+## DONE BY:
+Faisal Alqarni
+Hatem Alzahrani
+Abdulaziz binGhannam
+Adnan Surouji
+Abdulaziz Alonizi
+Hassan Yahya
 
-an application to dosplay event to user and enable them to socialize with each other.
-
-## what is the changes in this branch?
-finsished first part of the project
+A KFUPM's graduators
