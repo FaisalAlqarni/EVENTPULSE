@@ -25,9 +25,7 @@ class EventCoordinator {
     await API.getCategory().then((response) {
      
         Iterable list = json.decode(response.body);
-        print('0000000000000000000000000000000000000000000');
         _instance.categories = list.map((model) => Categoory.fromJson(model)).toList();
-        print(categories[0].events[0].name);
     });
   }
 

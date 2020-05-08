@@ -35,13 +35,13 @@ class _NavBarState extends State<NavigationBar> {
 
         items: <Widget>[
           //the most left icon, index 0 (the timeline)
-          Icon(Icons.adjust, size: 30.0, color: Colors.black),
+          Icon(Icons.adjust, size: 30.0, color: Theme.of(context).primaryColorLight),
           //the second icon, index 1 (the discover page)
-          Icon(Icons.search, size: 30.0, color: Colors.black),
+          Icon(Icons.search, size: 30.0, color: Theme.of(context).primaryColorLight),
           //the third icon, index 2 (map view)
-          Icon(Icons.location_on, size: 30.0, color: Colors.black),
+          Icon(Icons.location_on, size: 30.0, color: Theme.of(context).primaryColorLight),
           //the last icon, index 3 (profile view)
-          Icon(Icons.beach_access, size: 30.0, color: Colors.black),
+          Icon(Icons.beach_access, size: 30.0, color: Theme.of(context).primaryColorLight),
         ],
         //animation speed
         animationDuration: Duration(milliseconds: 200),

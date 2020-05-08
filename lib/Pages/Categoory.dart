@@ -13,7 +13,6 @@ class Categoory {
   
   factory Categoory.fromJson(Map<String, dynamic> json) {
   var list = json['events'] as List;
-    print(list.runtimeType); //returns List<dynamic>
     List<Event> eventsList = list.map((i) => Event.fromJson(i)).toList();
 
     return new Categoory(

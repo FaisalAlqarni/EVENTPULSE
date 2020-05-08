@@ -1,9 +1,17 @@
 //  the main class where it will call the home page
 //  no need to modify this class
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'Pages/Navigation/navigation_controler.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(
+    /// 1. Wrap your App widget in the Phoenix widget
+    Phoenix(
+      child: MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -17,7 +25,7 @@ class MyApp extends StatelessWidget {
           }
         },
         child: MaterialApp(
-          title: 'Social Event Discoverer',
+          title: 'EVENTPULSE',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
               hintColor: Color(0xff486581),

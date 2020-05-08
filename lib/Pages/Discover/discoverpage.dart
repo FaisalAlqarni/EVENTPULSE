@@ -1,3 +1,5 @@
+import 'package:EventPulse/Pages/event_details.dart';
+import 'package:filter_list/filter_list.dart';
 import 'package:flutter/material.dart';
 import 'package:search_widget/search_widget.dart';
 import 'package:EventPulse/Pages/Categoory.dart';
@@ -5,7 +7,6 @@ import 'package:EventPulse/Pages/Discover/sliding_cards.dart';
 import 'dart:convert';
 import 'package:EventPulse/Pages/API.dart';
 import 'package:EventPulse/Pages/event.dart';
-import 'package:EventPulse/Pages/event_details.dart';
 import 'package:intl/intl.dart';
 
 import '../event_coordinator.dart';
@@ -106,26 +107,36 @@ class _NewDiscoverState extends State<NewDiscover>
   static EventCoordinator eventCoordinator = new EventCoordinator();
   var eventss = new List<Event>();
   var categ = new List<Categoory>();
-  Event x;
-/*   _getEvents() {
-    API.getEvent().then((response) {
-      setState(() {
-        Iterable list = json.decode(response.body);
-        eventss = list.map((model) => Event.fromJson(model)).toList();
-      });
-    });
-  }
+  var filteredCateg = new List<Categoory>();
+  List<String> matchingList = ['Entertainment', 'Sport', 'Culture'];
+  List<String> xx = [];
 
-  _getCategoories() {
-    API.getCategory().then((response) {
+  List<String> nn = [];
+  Event x;
+
+  void _openFilterList() async {
+    nn.clear();
+    xx.clear();
+    filteredCateg.clear();
+    for (int i = 0; i < categ.length; i++) {
+      nn.add(categ[i].name);
+    }
+    var list = await FilterList.showFilterList(
+      context,
+      allTextList: nn,
+      height: 450,
+      borderRadius: 20,
+      headlineText: "Select what u want to show",
+      searchFieldHintText: "Search Here",
+      selectedTextList: xx,
+    );
+
+    if (list != null) {
       setState(() {
-        Iterable list = json.decode(response.body);
-        print('0000000000000000000000000000000000000000000');
-        categ = list.map((model) => Categoory.fromJson(model)).toList();
-        print(categ[0].events[0].name);
+        xx = List.from(list);
       });
-    });
-  } */
+    }
+  }
 
   _injectData() async {
     await eventCoordinator.downloadEvents();
@@ -141,8 +152,6 @@ class _NewDiscoverState extends State<NewDiscover>
   initState() {
     super.initState();
     _injectData();
-    //_getEvents();
-    //_getCategoories();
   }
 
   dispose() {
@@ -153,252 +162,295 @@ class _NewDiscoverState extends State<NewDiscover>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      // appBar:
-      appBar: PreferredSize(
-        child: Padding(
-          padding: EdgeInsets.only(top: 30.0, left: 10.0, right: 10.0),
-          child: Card(
-            elevation: 6.0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(5.0),
-                ),
-              ),
-              child: Column(
-                children: <Widget>[
-                  SearchWidget<Event>(
-                    dataList: eventss,
-                    hideSearchBoxWhenItemSelected: false,
-                    listContainerHeight: MediaQuery.of(context).size.height / 2,
-                    queryBuilder: (query, eventss) {
-                      return eventss
-                          .where((eventss) => eventss.name
-                              .toLowerCase()
-                              .contains(query.toLowerCase()))
-                          .toList();
-                    },
-                    popupListItemBuilder: (eventss) {
-                      return PopupListItemWidget(eventss);
-                    },
-                    selectedItemBuilder: (selectedItem, deleteSelectedItem) {
-                      //return SelectedItemWidget(selectedItem, deleteSelectedItem);
-                    },
-                    // widget customization
-                    //noItemsFoundWidget: NoItemsFound(),
-                    textFieldBuilder: (controller, focusNode) {
-                      return MyTextField(controller, focusNode);
-                    },
-                    onItemSelected: (item) {
-                      setState(
-                        () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (BuildContext context) {
-                                return new EventDetails(rootEvent: item);
-                              },
-                            ),
-                          );
-                        },
-                      );
-                    },
+        // appBar:
+        appBar: PreferredSize(
+          child: Padding(
+            padding: EdgeInsets.only(top: 30.0, left: 10.0, right: 10.0),
+            child: Card(
+              elevation: 6.0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(5.0),
                   ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        preferredSize: Size(
-          MediaQuery.of(context).size.width,
-          62.0,
-        ),
-      ),
-
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
-        child: ListView.builder(
-            primary: false,
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: categ == null ? 0 : categ.length,
-            itemBuilder: (BuildContext context, int indexOfCategories) {
-              return Column(children: <Widget>[
-                SizedBox(height: 1.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
+                child: Column(
                   children: <Widget>[
-                    Text(
-                      categ[indexOfCategories].name,
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColorDark,
-                        fontSize: 23,
-                        fontWeight: FontWeight.w800,
-                      ),
+                    SearchWidget<Event>(
+                      dataList: eventss,
+                      hideSearchBoxWhenItemSelected: false,
+                      listContainerHeight:
+                          MediaQuery.of(context).size.height / 2,
+                      queryBuilder: (query, eventss) {
+                        return eventss
+                            .where((eventss) => eventss.name
+                                .toLowerCase()
+                                .contains(query.toLowerCase()))
+                            .toList();
+                      },
+                      popupListItemBuilder: (eventss) {
+                        return PopupListItemWidget(eventss);
+                      },
+                      selectedItemBuilder: (selectedItem, deleteSelectedItem) {
+                        //return SelectedItemWidget(selectedItem, deleteSelectedItem);
+                      },
+                      // widget customization
+                      //noItemsFoundWidget: NoItemsFound(),
+                      textFieldBuilder: (controller, focusNode) {
+                        return MyTextField(controller, focusNode);
+                      },
+                      onItemSelected: (item) {
+                        setState(
+                          () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  return new EventDetails(rootEvent: item);
+                                },
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),
-                SizedBox(height: 3.0),
+              ),
+            ),
+          ),
+          preferredSize: Size(
+            MediaQuery.of(context).size.width,
+            62.0,
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _openFilterList,
+          tooltip: 'Filter',
+          child: Icon(Icons.settings),
+        ),
+        body: xx == null || xx.length == 0
+            ? Padding(
+                padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
+                child: ListView.builder(
+                    primary: false,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: categ == null ? 0 : categ.length,
+                    itemBuilder: (BuildContext context, int indexOfCategories) {
+                      return Column(children: <Widget>[
+                        SizedBox(height: 1.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              categ[indexOfCategories].name,
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColorDark,
+                                fontSize: 23,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 3.0),
 
-                //Horizontal List here
-                Container(
-                  decoration: BoxDecoration(
-                    //color: Colors.white,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(5.0),
-                    ),
-                  ),
-                  height: MediaQuery.of(context).size.height * 0.45,
-                  child: PageView.builder(
-                    //primary: false,
-                    scrollDirection: Axis.horizontal,
-                    //shrinkWrap: true,
-                    itemCount: categ[indexOfCategories].events == null
-                        ? 0
-                        : categ[indexOfCategories].events.length,
-                    itemBuilder: (BuildContext context, int indexOfEvents) {
-                      return Padding(
-                        padding: EdgeInsets.only(right: 2.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15.0),
-                          child: Stack(
-                            children: <Widget>[
-                              InkWell(
-                                  onTap: () => {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (BuildContext context) {
-                                              for (int i = 0;
-                                                  i < eventss.length;
-                                                  i++) {
-                                                if (eventss[i].id ==
+                        //Horizontal List here
+                        Container(
+                          decoration: BoxDecoration(
+                            //color: Colors.white,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(5.0),
+                            ),
+                          ),
+                          height: MediaQuery.of(context).size.height * 0.45,
+                          child: PageView.builder(
+                            //primary: false,
+                            scrollDirection: Axis.horizontal,
+                            //shrinkWrap: true,
+                            itemCount: categ[indexOfCategories].events == null
+                                ? 0
+                                : categ[indexOfCategories].events.length,
+                            itemBuilder:
+                                (BuildContext context, int indexOfEvents) {
+                              return Padding(
+                                padding: EdgeInsets.only(right: 2.0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  child: Stack(
+                                    children: <Widget>[
+                                      InkWell(
+                                          onTap: () => {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      for (int i = 0;
+                                                          i < eventss.length;
+                                                          i++) {
+                                                        if (eventss[i].id ==
+                                                            categ[indexOfCategories]
+                                                                .events[
+                                                                    indexOfEvents]
+                                                                .id) {
+                                                          x = eventss[i];
+                                                        }
+                                                      }
+                                                      return new EventDetails(
+                                                          rootEvent: x);
+                                                    },
+                                                  ),
+                                                )
+                                              },
+                                          child: SlidingCard(
+                                            assetName: categ[indexOfCategories]
+                                                .events[indexOfEvents]
+                                                .image,
+                                            date: DateFormat.yMMMMd("en_US")
+                                                .format(DateTime.parse(
                                                     categ[indexOfCategories]
                                                         .events[indexOfEvents]
-                                                        .id) {
-                                                  x = eventss[i];
-                                                }
-                                              }
-                                              return new EventDetails(
-                                                  rootEvent: x);
-                                            },
-                                          ),
-                                        )
-                                      },
-                                  child: SlidingCard(
-                                    assetName: categ[indexOfCategories]
-                                        .events[indexOfEvents]
-                                        .image,
-                                    date: DateFormat.yMMMMd("en_US").format(
-                                        DateTime.parse(categ[indexOfCategories]
-                                            .events[indexOfEvents]
-                                            .start_date)),
-                                    name: categ[indexOfCategories]
-                                        .events[indexOfEvents]
-                                        .name,
-                                  )
-                                  /*Card(
-                                  semanticContainer: true,
-                                 clipBehavior: Clip.antiAliasWithSaveLayer,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:BorderRadius.all(
-                                    Radius.circular(20)
-                                  ) ),
-                                  elevation: 15.0,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(5.0),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Image.network(
-                                          categ[indexOfCategories]
-                                              .events[indexOfEvents]
-                                              .image,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
-                                              4,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
-                                              4,
-                                          fit: BoxFit.fill,
-                                        ),
-                                        Container(
-                                          height: MediaQuery.of(context)
-                                              .size
-                                              .height,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              10000,
-                                          child: new InkWell(
-                                            onTap: () => {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    for (int i = 0;
-                                                        i < eventss.length;
-                                                        i++) {
-                                                      if (eventss[i].id ==
-                                                          categ[indexOfCategories]
-                                                              .events[
-                                                                  indexOfEvents]
-                                                              .id) {
-                                                        x = eventss[i];
-                                                      }
-                                                    }
-                                                    return new EventDetails(
-                                                        rootEvent: x);
-                                                  },
-                                                ),
-                                              )
-                                            },
-                                          ),
-                                        ),
-                                        Center(
-                                          child: Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height /
-                                                6,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                3000,
-                                            padding: EdgeInsets.all(1),
-                                            constraints: BoxConstraints(
-                                              minWidth: 0,
-                                              minHeight: 20,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )),*/
+                                                        .start_date)),
+                                            name: categ[indexOfCategories]
+                                                .events[indexOfEvents]
+                                                .name,
+                                          )),
+                                    ],
                                   ),
-                            ],
+                                ),
+                              );
+                            },
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-                SizedBox(height: 20.0),
+                        SizedBox(height: 20.0),
 /*                 new Divider(
                   thickness: 1,
                   color: Colors.white,
                   indent: 20,
                   endIndent: 20,
                 ), */
-              ]);
-            }),
-      ),
-    );
+                      ]);
+                    }),
+              )
+            :
+
+//////////////////////////////////////////////////////////////////////////////////////////
+            Padding(
+                padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
+                child: ListView.builder(
+                    primary: false,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: xx == null ? 0 : xx.length,
+                    itemBuilder: (BuildContext context, int indexOfCategories) {
+                      for (int i = 0; i < xx.length; i++) {
+                        for (int j = 0; j < categ.length; j++) {
+                          if (xx[i] == categ[j].name) {
+                            filteredCateg.add(categ[j]);
+                          } else {}
+                        }
+                      }
+                      return Column(children: <Widget>[
+                        SizedBox(height: 1.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              filteredCateg[indexOfCategories].name,
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColorDark,
+                                fontSize: 23,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 3.0),
+
+                        //Horizontal List here
+                        Container(
+                          decoration: BoxDecoration(
+                            //color: Colors.white,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(5.0),
+                            ),
+                          ),
+                          height: MediaQuery.of(context).size.height * 0.45,
+                          child: PageView.builder(
+                            //primary: false,
+                            scrollDirection: Axis.horizontal,
+                            //shrinkWrap: true,
+                            itemCount:
+                                filteredCateg[indexOfCategories].events == null
+                                    ? 0
+                                    : filteredCateg[indexOfCategories]
+                                        .events
+                                        .length,
+                            itemBuilder:
+                                (BuildContext context, int indexOfEvents) {
+                              return Padding(
+                                padding: EdgeInsets.only(right: 2.0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  child: Stack(
+                                    children: <Widget>[
+                                      InkWell(
+                                          onTap: () => {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      for (int i = 0;
+                                                          i < eventss.length;
+                                                          i++) {
+                                                        if (eventss[i].id ==
+                                                            filteredCateg[
+                                                                    indexOfCategories]
+                                                                .events[
+                                                                    indexOfEvents]
+                                                                .id) {
+                                                          x = eventss[i];
+                                                        }
+                                                      }
+                                                      return new EventDetails(
+                                                          rootEvent: x);
+                                                    },
+                                                  ),
+                                                )
+                                              },
+                                          child: SlidingCard(
+                                            assetName:
+                                                filteredCateg[indexOfCategories]
+                                                    .events[indexOfEvents]
+                                                    .image,
+                                            date: DateFormat.yMMMMd("en_US")
+                                                .format(DateTime.parse(
+                                                    filteredCateg[
+                                                            indexOfCategories]
+                                                        .events[indexOfEvents]
+                                                        .start_date)),
+                                            name:
+                                                filteredCateg[indexOfCategories]
+                                                    .events[indexOfEvents]
+                                                    .name,
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 20.0),
+/*                 new Divider(
+                  thickness: 1,
+                  color: Colors.white,
+                  indent: 20,
+                  endIndent: 20,
+                ), */
+                      ]);
+                    }),
+              ));
   }
 
   @override

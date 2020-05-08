@@ -1,7 +1,7 @@
 import 'dart:convert';
-
-import 'package:EventPulse/Pages/Reviews/ReviewView.dart';
+import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:EventPulse/Pages/Users_List_Page.dart';
+import 'package:EventPulse/Pages/whoIsCheckedin.dart';
 import 'package:flutter/material.dart';
 import 'package:EventPulse/Pages/Reviews/ReviewList.dart';
 import 'package:EventPulse/Pages/event.dart';
@@ -10,6 +10,7 @@ import 'package:EventPulse/topBar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'API.dart';
+import 'event_tour.dart';
 
 class EventDetails extends StatefulWidget {
   final Event rootEvent;
@@ -28,12 +29,36 @@ class _HomeState extends State<EventDetails> {
   //   super.initState();
   //   event = getEvent();
   // }
-
   bool _favPressed = false;
   Icon _favIcon = Icon(Icons.favorite_border);
   bool _bookmarkPressed = false;
   Icon _bookmarkIcon = Icon(Icons.bookmark_border);
-  Icon _infoIcon = Icon(Icons.info_outline);
+  Icon _infoIcon = Icon(Icons.remove_red_eye);
+
+    void _showDialog(Text ttl, Text cntnt) {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: ttl,
+          titleTextStyle: TextStyle(color: Theme.of(context).primaryColorDark, fontWeight: FontWeight.bold, fontSize: 24),
+          contentTextStyle: TextStyle(color: Theme.of(context).primaryColorDark, fontWeight: FontWeight.bold, fontSize: 20),
+          content: cntnt,
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   _setFavIcon() async {
     await API
@@ -58,7 +83,7 @@ class _HomeState extends State<EventDetails> {
         .then((response) {
       setState(() {
         Map<String, dynamic> parsedJson = jsonDecode(response.body);
-        var isBookmarked = parsedJson["Bookmarked"];
+        var isBookmarked = parsedJson["bookmarked"];
         if (isBookmarked) {
           _bookmarkIcon = Icon(Icons.bookmark);
           _bookmarkPressed = isBookmarked;
@@ -88,8 +113,7 @@ class _HomeState extends State<EventDetails> {
 
   Widget likeButton(context, widget) {
     return IconButton(
-      iconSize: 20,
-      color: Theme.of(context).primaryColorDark,
+      color: Theme.of(context).primaryColor,
       icon: _favIcon,
       onPressed: () {
         setState(() {
@@ -110,7 +134,7 @@ class _HomeState extends State<EventDetails> {
     );
   }
 
-  Widget whosIntrestedButton(context, widget , int userID , int eventID) {
+  Widget whosIntrestedButton(context, widget, int userID, int eventID) {
     return IconButton(
       iconSize: 20,
       color: Theme.of(context).primaryColorDark,
@@ -132,10 +156,45 @@ class _HomeState extends State<EventDetails> {
     );
   }
 
+rateValue(){
+  String rate;
+  print(widget.rootEvent.rating);
+/*   if( widget.rootEvent.rating == null){
+    rate="0.000";
+  }
+  else{
+    //rate= widget.rootEvent.rating;
+  }
+  print(rate); */
+  return 2.5;
+}
+
+  Widget whosIsCheckedButton(context, widget, int userID, int eventID) {
+    return InkWell(
+      child: Text(
+        'who checked-in',
+        style: TextStyle(color: Theme.of(context).primaryColorDark),
+      ),
+      onTap: () {
+        Navigator.of(context).push(
+          new MaterialPageRoute(
+            builder: (c) {
+              return new WhoIsChecked(
+                title: "who is Checked-in",
+                userid: userID,
+                eventid: eventID,
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   Widget bookmarkButton(context, widget) {
+    print(widget.rootEvent.rating);
     return IconButton(
-      iconSize: 20,
-      color: Theme.of(context).primaryColorDark,
+      color: Theme.of(context).primaryColor,
       icon: _bookmarkIcon,
       onPressed: () {
         setState(() {
@@ -155,7 +214,28 @@ class _HomeState extends State<EventDetails> {
   }
 
   Widget nilChild() {
-    return Container();
+    return Column(
+      children: <Widget>[
+        Text(
+          '',
+          style: TextStyle(
+              color: Theme.of(context).primaryColorDark,
+              ),
+        ),
+      ],
+    );
+  }
+
+    Widget nilChildCheckin() {
+    return InkWell(
+      child: Text(
+        'who checked-in',
+        style: TextStyle(color: Theme.of(context).primaryColorDark),
+      ),
+      onTap: () {
+        _showDialog(Text('NOT SIGNED IN'), Text('Please sign-in first'));
+      },
+    );
   }
 
   _setLikeButton(context, widget) {
@@ -174,12 +254,19 @@ class _HomeState extends State<EventDetails> {
     }
   }
 
-
-    _setWhosInterestedButton(context, widget  , int userID , int eventID) {
+  _setWhosInterestedButton(context, widget, int userID, int eventID) {
     if (UserInstance().token == null) {
       return nilChild();
     } else {
-      return whosIntrestedButton(context, widget  ,userID ,  eventID);
+      return whosIntrestedButton(context, widget, userID, eventID);
+    }
+  }
+
+  _setWhoIsCheckedInButton(context, widget, int userID, int eventID) {
+    if (UserInstance().token == null) {
+      return nilChildCheckin();
+    } else {
+      return whosIsCheckedButton(context, widget, userID, eventID);
     }
   }
 
@@ -188,8 +275,6 @@ class _HomeState extends State<EventDetails> {
     // TODO: implement initState
     super.initState();
     if (UserInstance().token != null) {
-      print(
-          '///////////////////////////////////////////////////88888888888888888888');
       _setFavIcon();
       _setBookmarkIcon();
     } else {
@@ -220,51 +305,71 @@ class _HomeState extends State<EventDetails> {
             padding: const EdgeInsets.only(top: 16.0, bottom: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              //mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 const SizedBox(height: 250),
-                Row(children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      widget.rootEvent.name,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28.0,
-                          fontWeight: FontWeight.bold),
-                    ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(
+                    widget.rootEvent.name,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28.0,
+                        fontWeight: FontWeight.bold),
                   ),
-                  Container(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 6, top: 4),
-                      child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8.0,
-                            horizontal: 8.0,
+                ),
+                Row(
+                  //mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const SizedBox(width: 16.0),
+                    Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 16.0,
+                        ),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20.0)),
+                        child: InkWell(
+                          child: Text(
+                            "Reviews",
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColorDark),
                           ),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20.0)),
-                          child: InkWell(
-                            child: Icon(
-                              Icons.insert_comment,
-                              color: Theme.of(context).primaryColorDark,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              new MaterialPageRoute(
+                                builder: (c) {
+                                  return new ReviewList(
+                                    event_id: widget.rootEvent.id,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        )),
+                    //Spacer(),
+                    Container(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 6, top: 4, left: 10),
+                        child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8.0,
+                              horizontal: 8.0,
                             ),
-                            onTap: () {
-                              Navigator.of(context).push(
-                                new MaterialPageRoute(
-                                  builder: (c) {
-                                    return new ReviewList(
-                                      event_id: widget.rootEvent.id,
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                          )),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20.0)),
+                            child: _setWhoIsCheckedInButton(context, widget,
+                                UserInstance().id, widget.rootEvent.id)),
+                      ),
                     ),
-                  ),
-                ]),
+                    Spacer(),
+                    _setLikeButton(context, widget),
+                    _setBookmarkButton(context, widget),
+                  ],
+                ),
                 Container(
                     padding: const EdgeInsets.all(16.0),
                     color: Colors.white,
@@ -309,61 +414,46 @@ class _HomeState extends State<EventDetails> {
                                           color: Theme.of(context)
                                               .primaryColorDark,
                                           fontSize: 14.0),
-                                    )
+                                    ),
+                                    Spacer(),
+                                    InkWell(
+                                      child: Text(
+                                        "${widget.rootEvent.interest_count} Interests",
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .primaryColorDark,
+                                            fontSize: 16.0),
+                                      ),
+                                      onTap: () {
+                                        // Navigator.of(context).push(
+                                        //   new MaterialPageRoute(
+                                        //     builder: (c) {
+                                        //       return new Users_List(
+                                        //         title: "whos interested",
+                                        //         userid: 1,
+                                        //         eventid: 1,
+                                        //       );
+                                        //     },
+                                        //   ),
+                                        // );
+                                        //null;
+                                      },
+                                    ),
+                                    _setWhosInterestedButton(context, widget,
+                                        UserInstance().id, widget.rootEvent.id)
                                   ],
                                 ),
                               ),
-                              Padding(
-                                  padding: EdgeInsets.only(top: 0),
-                                  child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0,
-                                        horizontal: 16.0,
-                                      ),
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(20.0)),
-                                      child: Row(
-                                        //crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          InkWell(
-                                            child: Text(
-                                              "${widget.rootEvent.interest_count} Interests",
-                                              style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .primaryColorDark,
-                                                  fontSize: 16.0),
-                                            ),
-                                            onTap: () {
-                                              // Navigator.of(context).push(
-                                              //   new MaterialPageRoute(
-                                              //     builder: (c) {
-                                              //       return new Users_List(
-                                              //         title: "whos interested",
-                                              //         userid: 1,
-                                              //         eventid: 1,
-                                              //       );
-                                              //     },
-                                              //   ),
-                                              // );
-                                              //null;
-                                            },
-                                          ),
-                                          _setLikeButton(context, widget),
-                                          _setBookmarkButton(context, widget),
-                                          _setWhosInterestedButton(context, widget , UserInstance().id , widget.rootEvent.id)
-                                        ],
-                                      ))),
                             ],
                           ),
-                          const SizedBox(height: 20.0),
+                          const SizedBox(height: 10.0),
                           SizedBox(
                               width: MediaQuery.of(context).size.width,
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: <Widget>[
+                                  Spacer(),
                                   RaisedButton(
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
@@ -371,7 +461,7 @@ class _HomeState extends State<EventDetails> {
                                     color: Theme.of(context).primaryColorDark,
                                     textColor: Colors.white,
                                     child: Text(
-                                      "Guest Ticket",
+                                      "Ticket",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -385,6 +475,7 @@ class _HomeState extends State<EventDetails> {
                                     },
                                   ),
                                   // const SizedBox(width: 20),
+                                  Spacer(),
                                   RaisedButton(
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
@@ -392,7 +483,7 @@ class _HomeState extends State<EventDetails> {
                                     color: Theme.of(context).primaryColorDark,
                                     textColor: Colors.white,
                                     child: Text(
-                                      "Volunteer Ticket",
+                                      "360 Tour",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -402,10 +493,16 @@ class _HomeState extends State<EventDetails> {
                                       horizontal: 16.0,
                                     ),
                                     onPressed: () {
-                                      _launchURL(
-                                          widget.rootEvent.volunteer_url);
+                                     Navigator.of(context).push(
+                                        new MaterialPageRoute(
+                                          builder: (c) {
+                                            return new EventTour(rootUrl: widget.rootEvent.panorama_url);
+                                          },
+                                        ),
+                                      );
                                     },
                                   ),
+                                  Spacer()
                                   /*  Padding(
                                 padding: EdgeInsets.only(left: 1),
                                 child: Column(
@@ -429,7 +526,43 @@ class _HomeState extends State<EventDetails> {
                               ) */
                                 ],
                               )),
-                          const SizedBox(height: 30.0),
+                          const SizedBox(height: 15.0),
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              child: Row(
+                                children: <Widget>[
+                                  Text(
+                                    "Rate".toUpperCase(),
+                                    style: TextStyle(
+                                        color:
+                                            Theme.of(context).primaryColorDark,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 20.0),
+                                  ),
+
+                                ],
+                              )),
+                              const SizedBox(height: 10.0),
+                              Container(
+                                alignment: Alignment.center,
+                                      child: SmoothStarRating(
+                                      allowHalfRating: false,
+                                      onRatingChanged: (v) {
+                                        // _rating = v;
+                                        // setState(() {});
+                       /*                  _launchURL(
+                                            widget.rootEvent.volunteer_url); */
+                                      },
+                                      starCount: 5,
+                                      rating: widget.rootEvent.rating,
+                                      size: 40.0,
+                                      color: Theme.of(context).primaryColorDark,
+                                      borderColor:
+                                          Theme.of(context).primaryColorDark,
+                                      spacing: 0.0),
+                              ),
+
+                          const SizedBox(height: 10.0),
                           Text(
                             "Description".toUpperCase(),
                             style: TextStyle(

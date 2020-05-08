@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:senior_project/Pages/event.dart';
+import 'Pages/event.dart';
 // import 'package:senior_project/navigation_bar.dart';
 // import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -27,13 +27,13 @@ class _HomeState extends State<EventDetails> {
   Icon _favIcon = Icon(Icons.favorite_border);
 
   void _launchURL(String url) async {
-
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
-}
+
   void _launchMapsUrl(double lat, double lon) async {
     final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lon';
     if (await canLaunch(url)) {
@@ -90,9 +90,7 @@ class _HomeState extends State<EventDetails> {
                             style:
                                 TextStyle(color: Colors.white, fontSize: 13.0),
                           ),
-                          onTap: () {
-                            print("add review page here ");
-                          },
+                          onTap: () {},
                         )),
                     Spacer(),
                     IconButton(
@@ -198,7 +196,6 @@ class _HomeState extends State<EventDetails> {
                                 onPressed: () {
                                   // _launchMapsUrl(46.45, 26.45);
                                   _launchURL("https://www.youtube.com/");
-
                                 },
                               ),
                               RaisedButton(
@@ -217,7 +214,6 @@ class _HomeState extends State<EventDetails> {
                                 ),
                                 onPressed: () {
                                   _launchURL("https://www.google.com/");
-
                                 },
                               ),
                             ],
@@ -246,6 +242,13 @@ class _HomeState extends State<EventDetails> {
             left: 0,
             right: 0,
             child: AppBar(
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                color: Theme.of(context).primaryColorDark,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
               backgroundColor: Colors.transparent,
               elevation: 0,
               centerTitle: true,

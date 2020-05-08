@@ -1,6 +1,10 @@
+import 'dart:ffi';
+
 import 'package:http/http.dart' as http;
 
-class Event{
+import 'MotherActivity.dart';
+
+class Event extends MotherActivity {
   int id;
   String name;
   String description;
@@ -10,8 +14,9 @@ class Event{
   String longitude;
   String latitude;
   String guest_url;
-  String volunteer_url;
+  String panorama_url;
   int interest_count;
+  double rating;
 
   Event(
     this.id,
@@ -21,7 +26,8 @@ class Event{
     this.end_date,
     this.image,
     this.longitude,
-    this.latitude
+    this.latitude,
+    this.rating
   );
 
   Event.fromJson(Map<String, dynamic> json)
@@ -34,8 +40,9 @@ class Event{
         longitude = json['longitude'],
         latitude = json['latitude'],
         guest_url = json['guest_url'],
-        volunteer_url = json['volunteer_url'],
-        interest_count = json['interest_count'];
+        panorama_url = json['panorama_url'],
+        interest_count = json['interest_count'],
+        rating = json['rating'].toDouble();
 
   Map<String, dynamic> toJson() =>
       {
@@ -47,7 +54,12 @@ class Event{
         'image': image,
         'longitude': longitude,
         'longitude': longitude,
+        'rating': rating,
       };
 
+ @override
+  String motherMethod() {
+    return "just checked-in " + this.name;
+  }
 
 }

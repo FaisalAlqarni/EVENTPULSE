@@ -1,5 +1,7 @@
+import 'package:EventPulse/main.dart';
 import 'package:flutter/material.dart';
 import 'package:EventPulse/Pages/user_instance.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'API.dart';
 import 'Navigation/navigation_controler.dart';
 import 'package:email_validator/email_validator.dart';
@@ -169,6 +171,14 @@ class _HomeState extends State<MainLogin> {
           // return object of type Dialog
           return AlertDialog(
             title: ttl,
+            titleTextStyle: TextStyle(
+                color: Theme.of(context).primaryColorDark,
+                fontWeight: FontWeight.bold,
+                fontSize: 24),
+            contentTextStyle: TextStyle(
+                color: Theme.of(context).primaryColorDark,
+                fontWeight: FontWeight.bold,
+                fontSize: 20),
             content: cntnt,
             actions: <Widget>[
               // usually buttons at the bottom of the dialog
@@ -192,12 +202,12 @@ class _HomeState extends State<MainLogin> {
       await API.requestLogin(context, email, password);
 
       if (UserInstance().token == null) {
-        _showDialog(new Text("no go :("), new Text("Something went wrong!"));
+        _showDialog(new Text("Wrong Information."),
+            new Text("please recheck your inputs."));
       } else {
         _emailController.clear();
         _passwordController.clear();
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => NavigationBarController()));
+        Phoenix.rebirth(context);
       }
     }
 
@@ -213,8 +223,8 @@ class _HomeState extends State<MainLogin> {
       } else {
         _emailController.clear();
         _passwordController.clear();
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => NavigationBarController()));
+
+        Phoenix.rebirth(context);
       }
     }
 
@@ -232,6 +242,11 @@ class _HomeState extends State<MainLogin> {
 
     //login form
     void _loginSheet() {
+      _passwordController.clear();
+      _emailController.clear();
+      _firstNameController.clear();
+      _usernameController.clear();
+      _lastNameController.clear();
       _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
         return DecoratedBox(
           decoration: BoxDecoration(color: Theme.of(context).primaryColor),
@@ -336,6 +351,11 @@ class _HomeState extends State<MainLogin> {
 
     //user regestration form
     void _registerUserSheet() {
+      _passwordController.clear();
+      _emailController.clear();
+      _firstNameController.clear();
+      _usernameController.clear();
+      _lastNameController.clear();
       _scaffoldKey.currentState.showBottomSheet<void>((BuildContext context) {
         return DecoratedBox(
           decoration: BoxDecoration(color: Theme.of(context).primaryColor),
@@ -364,7 +384,7 @@ class _HomeState extends State<MainLogin> {
                             icon: Icon(
                               Icons.close,
                               size: 30.0,
-                              color: Colors.white,
+                              color: Theme.of(context).primaryColorDark,
                             ),
                           ),
                         )
@@ -375,16 +395,20 @@ class _HomeState extends State<MainLogin> {
                   ),
                   SingleChildScrollView(
                     child: Column(children: <Widget>[
+                      /*  Flex(direction: Axis.vertical,
+                      children: <Widget>[
+
+                      ]) */
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        height: 140,
+                        height: 110,
                         child: Stack(
                           children: <Widget>[
                             Positioned(
                               child: Align(
                                 child: Container(
-                                  width: 130,
-                                  height: 130,
+                                  width: 110,
+                                  height: 110,
                                   decoration: BoxDecoration(
                                       image: DecorationImage(
                                         image: AssetImage(
@@ -400,8 +424,8 @@ class _HomeState extends State<MainLogin> {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                          bottom: 20,
-                          top: 20,
+                          bottom: 13,
+                          top: 13,
                         ),
                       ),
                       Padding(

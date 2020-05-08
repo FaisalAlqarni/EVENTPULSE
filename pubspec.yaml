@@ -17,6 +17,7 @@ environment:
   sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
+  timeline_list: ^0.0.3
   google_maps_flutter: ^0.5.24+1
   email_validator: '^1.0.0'
   shared_preferences: ^0.5.4+6
@@ -26,9 +27,15 @@ dependencies:
   smooth_star_rating: ^1.0.3
   http: ^0.12.0+2
   font_awesome_flutter: ^8.5.0
-  curved_navigation_bar: ^0.3.1 #latest version
+  curved_navigation_bar: ^0.3.1
   intl: ^0.16.0
-
+  geolocator: ^5.1.4+2
+  filter_list: ^0.0.4
+  flutter_phoenix: "^0.1.0"
+  flutter_widgets: ^0.1.12
+  webview_flutter: ^0.3.20+2
+  persistent_bottom_nav_bar: any
+  splashscreen: ^1.2.0
   flutter:
     sdk: flutter
 
@@ -39,8 +46,13 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: "^0.7.3"
 
-
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo.png"
+  
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

@@ -265,11 +265,8 @@ class _HomeState extends State<EventManageRr> {
           endDate: _timeTo);
       CreateEventAPI p =
           await createEventPost(CREATE_EVENT_POST_URL, body: newPost.toMap());
-      print(p.name);
       if (p.name == null) {
-        print('INVALID INPUTS, TRY AGAIN');
       } else /*if(p.email.isNotEmpty)*/ {
-        print('EVENT CREATED');
         Navigator.of(context).push(
             MaterialPageRoute(builder: (BuildContext context) => NewDiscover()));
       }
